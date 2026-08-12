@@ -1,0 +1,50 @@
+[
+  {
+    "title": "OCI AI Foundations Associate (2025)",
+    "issuer": "Oracle",
+    "issueDate": "2025-09-01T00:00:00.000Z",
+    "credentialUrl": "https://mylearn.oracle.com/ou/learning-path/become-a-oci-ai-foundations-associate-2025/147781",
+    "imageUrl": "https://res.cloudinary.com/dsmyka9cr/image/upload/v1773149399/oraclecirtificate_elmzum.jpg",
+    "skills": [
+      "Basic ML",
+      "AI"
+    ],
+    "color": "emerald",
+    "order": 0,
+    "isVisible": true
+  },
+  {
+    "title": "AWS Cloud Quest: Cloud Practitioner - Training Badge",
+    "issuer": "AWS",
+    "issueDate": "2026-04-01T00:00:00.000Z",
+    "credentialUrl": "https://www.credly.com/badges/d30fe051-d896-46e7-bd43-3f0077d0fc43/public_url",
+    "imageUrl": "https://res.cloudinary.com/dsmyka9cr/image/upload/q_auto/f_auto/v1775403413/aws_labs_cir2_lwhqyd.jpg",
+    "skills": [
+      "Amazon Web Services (AWS)",
+      "AWS",
+      "AWS Cloud",
+      "AWS Cloud Computing",
+      "AWS Cloud Foundations"
+    ],
+    "color": "blue",
+    "order": 1,
+    "isVisible": true
+  },
+  {
+    "title": "Full stack generative and Agentic AI with python",
+    "issuer": "Udemy",
+    "issueDate": "2026-06-01T00:00:00.000Z",
+    "credentialUrl": "https://www.udemy.com/certificate/UC-cefd5275-ff28-47de-a824-c380e58e660e/",
+    "imageUrl": "https://res.cloudinary.com/dsmyka9cr/image/upload/v1782059915/udemycir_yqhshg.jpg",
+    "skills": [
+      "Stateful AI system design with LangGraph",
+      "RAG pipeline implementation",
+      "Model Context Protocol (MCP) server development",
+      "Data validation and structuring with Pydantic",
+      "Containerized deployment with Docker"
+    ],
+    "color": "purple",
+    "order": 2,
+    "isVisible": true
+  }
+]

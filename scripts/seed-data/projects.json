@@ -1,0 +1,144 @@
+[
+  {
+    "title": "PollMan – Full-Stack Real-Time Poll & Survey Platform",
+    "slug": "pollman-full-stack-real-time-poll-survey-platform",
+    "summary": "A modern full-stack real-time poll and survey platform with live analytics, public sharing, poll publishing, and interactive dashboards built using React, No...",
+    "description": "A modern full-stack real-time poll and survey platform with live analytics, public sharing, poll publishing, and interactive dashboards built using React, Node.js, MongoDB, Socket.IO, and Recharts",
+    "tech": [
+      "React",
+      "Typescript",
+      "Express.js",
+      "Node JS",
+      "Socket.IO",
+      "Oauth 2.0",
+      "Recharts"
+    ],
+    "githubUrl": "https://github.com/lalit999999/PollMan",
+    "liveUrl": "https://pollman.onrender.com/",
+    "order": 0,
+    "isVisible": true
+  },
+  {
+    "title": "Super Alein - AI-powered Gmail + Google Calendar command center",
+    "slug": "super-alein-ai-powered-gmail-google-calendar-command-center",
+    "summary": "SuperAlien is an AI-powered productivity platform that augments Gmail and Google Calendar with intelligent features.",
+    "description": "SuperAlien is an AI-powered productivity platform that augments Gmail and Google Calendar with intelligent features. It provides AI email summarization, smart management, advanced search, and agent-driven automation—without cloning Gmail. Built for professionals who want to work smarter, not harder.",
+    "tech": [
+      "Next js",
+      "Typescript",
+      "Clerk Auth",
+      "Corsair dev",
+      "PostgreSQL",
+      "OpenAI",
+      "Gmail and Google Calendar Connectors"
+    ],
+    "githubUrl": "https://github.com/lalit999999/super-alien",
+    "liveUrl": "https://superalein.lalitgurjar.in/",
+    "order": 1,
+    "isVisible": true
+  },
+  {
+    "title": "Real-time Rider Location Tracking Application",
+    "slug": "real-time-rider-location-tracking-application",
+    "summary": "A real-time application for tracking rider locations using WebSocket technology.",
+    "description": "A real-time application for tracking rider locations using WebSocket technology. The application allows users to view the live location of riders on a map, providing an interactive and dynamic experience.",
+    "tech": [
+      "HTML5",
+      "CSS3",
+      "Node.js",
+      "Express.js",
+      "MongoDB",
+      "Socket.io",
+      "Redis Pub/Sub",
+      "Passport.js",
+      "Google Oauth 2.0",
+      "CORS",
+      "Dotenv"
+    ],
+    "githubUrl": "https://github.com/lalit999999/realtime-rider-location-tracting-application",
+    "liveUrl": "https://realtime-rider-location-tracting.onrender.com",
+    "order": 2,
+    "isVisible": true
+  },
+  {
+    "title": "Local Service Booking Platform (Full stack application)",
+    "slug": "local-service-booking-platform-full-stack-application",
+    "summary": "Built a MERN-based service marketplace platform with RESTful APIs for services, bookings, categories,and reviews.Implemented JWT authentication and role-base...",
+    "description": "Built a MERN-based service marketplace platform with RESTful APIs for services, bookings, categories,and reviews.Implemented JWT authentication and role-based authorization for Customer, Provider, and Admin access ,Designed a booking lifecycle system (Requested → Confirmed → In-progress → Completed → Cancelled).Structured MongoDB schemas using Mongoose for scalable data management and CRUD operations.Integrated image uploads using Multer and Cloudinary for profile and service-related images.",
+    "tech": [
+      "React",
+      "Vite",
+      "Node.js",
+      "Express.js",
+      "MongoDB",
+      "JWT",
+      "Axios",
+      "Cloudinary",
+      "Multer",
+      "CORS",
+      "Dotenv"
+    ],
+    "githubUrl": "https://github.com/lalit999999/service_provider_frontend",
+    "liveUrl": "https://l-s-p.lalitgurjar.in/",
+    "order": 3,
+    "isVisible": true
+  },
+  {
+    "title": "Nebula CheckGrid (Real-time Application)",
+    "slug": "nebula-checkgrid-real-time-application",
+    "summary": "Nebula CheckGrid is inspired by the 1 Million Checkboxes idea, but built as a practical full-stack real-time app for learning and evaluation.",
+    "description": "Nebula CheckGrid is inspired by the 1 Million Checkboxes idea, but built as a practical full-stack real-time app for learning and evaluation.",
+    "tech": [
+      "HTML5",
+      "CSS3",
+      "Node.js",
+      "Express.js",
+      "MongoDB",
+      "Socket.io",
+      "Redis Pub/Sub",
+      "Passport.js",
+      "Google Oauth 2.0",
+      "CORS",
+      "Dotenv"
+    ],
+    "githubUrl": "https://github.com/lalit999999/1M-Check_box",
+    "liveUrl": "https://onem-check-box.onrender.com/",
+    "order": 4,
+    "isVisible": true
+  },
+  {
+    "title": "WDC Induction Platform",
+    "slug": "wdc-induction-platform",
+    "summary": "The WDC Induction Platform is a secure, full-stack web application designed to digitize and automate the student recruitment and onboarding process for the u...",
+    "description": "The WDC Induction Platform is a secure, full-stack web application designed to digitize and automate the student recruitment and onboarding process for the university club. It eliminates manual paperwork by providing a centralized dashboard for both administrators and applicants, streamlining workflows from initial registration to final evaluation",
+    "tech": [
+      "Node.js",
+      "Express.js",
+      "MongoDB",
+      "JWT"
+    ],
+    "githubUrl": "https://github.com/lalit999999/wdc_redesign_frontend",
+    "liveUrl": "https://wdc.lalitgurjar.in/",
+    "order": 5,
+    "isVisible": true
+  },
+  {
+    "title": "MiniYouTube Backend",
+    "slug": "miniyoutube-backend",
+    "summary": "Developed a RESTful backend system for a Mini YouTube–like video sharing platform to manage users,videos, and authentication",
+    "description": "Developed a RESTful backend system for a Mini YouTube–like video sharing platform to manage users,videos, and authentication",
+    "tech": [
+      "Node.js",
+      "Express.js",
+      "MongoDB",
+      "JWT",
+      "bcrypt",
+      "Multer",
+      "Cloudinary"
+    ],
+    "githubUrl": "https://github.com/lalit999999/miniyoutube_backend",
+    "liveUrl": "",
+    "order": 6,
+    "isVisible": true
+  }
+]

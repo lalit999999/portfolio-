@@ -1,0 +1,30 @@
+[
+  {
+    "name": "GitHub",
+    "url": "https://github.com/lalit999999",
+    "iconName": "Github",
+    "order": 0,
+    "isVisible": true
+  },
+  {
+    "name": "LinkedIn",
+    "url": "https://www.linkedin.com/in/lalitgujar/",
+    "iconName": "Linkedin",
+    "order": 1,
+    "isVisible": true
+  },
+  {
+    "name": "Twitter",
+    "url": "https://x.com/lalit7363",
+    "iconName": "Twitter",
+    "order": 2,
+    "isVisible": true
+  },
+  {
+    "name": "Blog",
+    "url": "https://hashnode.com/@lalitgujjar",
+    "iconName": "Hash",
+    "order": 3,
+    "isVisible": true
+  }
+]

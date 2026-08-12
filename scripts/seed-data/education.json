@@ -1,0 +1,20 @@
+[
+  {
+    "institution": "NIT Patna",
+    "degree": "B.Tech in Computer Science",
+    "field": "Computer Science",
+    "startDate": "2024-01-01T00:00:00.000Z",
+    "order": 0,
+    "isVisible": true
+  },
+  {
+    "institution": "MHBGSSS patodi",
+    "degree": "Higher Secondary (12th)",
+    "field": "Higher Secondary (12th)",
+    "startDate": "2023-01-01T00:00:00.000Z",
+    "endDate": "2023-01-01T00:00:00.000Z",
+    "description": "Board: RBSE",
+    "order": 1,
+    "isVisible": true
+  }
+]
