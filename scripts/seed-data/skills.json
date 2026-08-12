@@ -1,0 +1,177 @@
+[
+  {
+    "name": "C++",
+    "iconName": "Code2",
+    "category": "languages",
+    "order": 0,
+    "isVisible": true
+  },
+  {
+    "name": "JavaScript",
+    "iconName": "FileCode2",
+    "category": "languages",
+    "order": 1,
+    "isVisible": true
+  },
+  {
+    "name": "SQL",
+    "iconName": "Database",
+    "category": "languages",
+    "order": 2,
+    "isVisible": true
+  },
+  {
+    "name": "ReactJS",
+    "iconName": "Code2",
+    "category": "frameworks",
+    "order": 0,
+    "isVisible": true
+  },
+  {
+    "name": "NextJS",
+    "iconName": "Layout",
+    "category": "frameworks",
+    "order": 1,
+    "isVisible": true
+  },
+  {
+    "name": "Express JS",
+    "iconName": "Server",
+    "category": "frameworks",
+    "order": 2,
+    "isVisible": true
+  },
+  {
+    "name": "FastAPI",
+    "iconName": "Terminal",
+    "category": "frameworks",
+    "order": 3,
+    "isVisible": true
+  },
+  {
+    "name": "Node.js",
+    "iconName": "Server",
+    "category": "backend-infrastructure",
+    "order": 0,
+    "isVisible": true
+  },
+  {
+    "name": "REST API",
+    "iconName": "Cpu",
+    "category": "backend-infrastructure",
+    "order": 1,
+    "isVisible": true
+  },
+  {
+    "name": "LLM API Integration",
+    "iconName": "Sparkles",
+    "category": "backend-infrastructure",
+    "order": 2,
+    "isVisible": true
+  },
+  {
+    "name": "WebSockets",
+    "iconName": "Network",
+    "category": "backend-infrastructure",
+    "order": 3,
+    "isVisible": true
+  },
+  {
+    "name": "System Design",
+    "iconName": "GitFork",
+    "category": "backend-infrastructure",
+    "order": 4,
+    "isVisible": true
+  },
+  {
+    "name": "MongoDB",
+    "iconName": "Database",
+    "category": "database",
+    "order": 0,
+    "isVisible": true
+  },
+  {
+    "name": "PostgreSQL",
+    "iconName": "Database",
+    "category": "database",
+    "order": 1,
+    "isVisible": true
+  },
+  {
+    "name": "Redis",
+    "iconName": "HardDrive",
+    "category": "database",
+    "order": 2,
+    "isVisible": true
+  },
+  {
+    "name": "Docker",
+    "iconName": "Box",
+    "category": "devops-deployment",
+    "order": 0,
+    "isVisible": true
+  },
+  {
+    "name": "GitHub Actions",
+    "iconName": "Play",
+    "category": "devops-deployment",
+    "order": 1,
+    "isVisible": true
+  },
+  {
+    "name": "CI/CD",
+    "iconName": "RefreshCw",
+    "category": "devops-deployment",
+    "order": 2,
+    "isVisible": true
+  },
+  {
+    "name": "Caddy",
+    "iconName": "Globe",
+    "category": "devops-deployment",
+    "order": 3,
+    "isVisible": true
+  },
+  {
+    "name": "VPS Deployment",
+    "iconName": "Cloud",
+    "category": "devops-deployment",
+    "order": 4,
+    "isVisible": true
+  },
+  {
+    "name": "Git",
+    "iconName": "GitBranch",
+    "category": "tools",
+    "order": 0,
+    "isVisible": true
+  },
+  {
+    "name": "GitHub",
+    "iconName": "Github",
+    "category": "tools",
+    "order": 1,
+    "isVisible": true
+  },
+  {
+    "name": "Linux",
+    "iconName": "Terminal",
+    "category": "tools",
+    "order": 2,
+    "isVisible": true
+  },
+  {
+    "name": "Postman",
+    "iconName": "Radio",
+    "category": "tools",
+    "order": 3,
+    "isVisible": true
+  },
+  {
+    "name": "Blender",
+    "iconName": "Component",
+    "category": "tools",
+    "order": 4,
+    "isVisible": true
+  }
+]

@@ -1,0 +1,65 @@
+[
+  {
+    "name": "JavaScript & Web Development",
+    "host": "javascriptcontent.hashnode.dev",
+    "username": "lalitgujjar",
+    "order": 0,
+    "isVisible": true
+  },
+  {
+    "name": "Git & GitHub",
+    "host": "gitforbeginnerbylalit.hashnode.dev",
+    "username": "lalitgujjar",
+    "order": 1,
+    "isVisible": true
+  },
+  {
+    "name": "Git & GitHub",
+    "host": "gitinternalyworking.hashnode.dev",
+    "username": "lalitgujjar",
+    "order": 2,
+    "isVisible": true
+  },
+  {
+    "name": "Git & GitHub",
+    "host": "whygitexist.hashnode.dev",
+    "username": "lalitgujjar",
+    "order": 3,
+    "isVisible": true
+  },
+  {
+    "name": "Computer Networking",
+    "host": "nteworkdevices.hashnode.dev",
+    "username": "lalitgujjar",
+    "order": 4,
+    "isVisible": true
+  },
+  {
+    "name": "Authentication system",
+    "host": "jwtexplainedsimply.hashnode.dev",
+    "username": "lalitgujjar",
+    "order": 5,
+    "isVisible": true
+  },
+  {
+    "name": "Computer Networking",
+    "host": "recursivednsworking.hashnode.dev",
+    "username": "lalitgujjar",
+    "order": 6,
+    "isVisible": true
+  },
+  {
+    "name": "Computer Networking",
+    "host": "dnsrecordsineasywayo.hashnode.dev",
+    "username": "lalitgujjar",
+    "order": 7,
+    "isVisible": true
+  },
+  {
+    "name": "Computer Networking",
+    "host": "curlcommandinlinux.hashnode.dev",
+    "username": "lalitgujjar",
+    "order": 8,
+    "isVisible": true
+  }
+]

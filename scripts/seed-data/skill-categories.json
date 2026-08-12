@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Languages",
+    "slug": "languages",
+    "order": 0,
+    "isVisible": true
+  },
+  {
+    "name": "Frameworks",
+    "slug": "frameworks",
+    "order": 1,
+    "isVisible": true
+  },
+  {
+    "name": "Backend & Infrastructure",
+    "slug": "backend-infrastructure",
+    "order": 2,
+    "isVisible": true
+  },
+  {
+    "name": "Database",
+    "slug": "database",
+    "order": 3,
+    "isVisible": true
+  },
+  {
+    "name": "DevOps & Deployment",
+    "slug": "devops-deployment",
+    "order": 4,
+    "isVisible": true
+  },
+  {
+    "name": "Tools",
+    "slug": "tools",
+    "order": 5,
+    "isVisible": true
+  }
+]

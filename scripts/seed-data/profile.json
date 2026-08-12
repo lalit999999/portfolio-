@@ -1,0 +1,20 @@
+{
+  "name": "Lalit Gurjar",
+  "tagline": "Full Stack Developer | Node js guy who builds scalable solution",
+  "description": [
+    "I build full-stack AI applications that integrate large language models into production systems. Specializing in end-to-end development from LLM API integration (OpenAI, Anthropic) through scalable backend architecture and responsive frontends.",
+    "Technical expertise spans frontend (React, NextJS, TypeScript), backend (Node.js, FastAPI, REST APIs), databases (PostgreSQL, MongoDB), and infrastructure (Docker, CI/CD, GitHub Actions, VPS deployment). Experienced with system design, WebSocket implementation, and real-time data handling using Redis and Socket.IO.",
+    "Currently pursuing B.Tech in Computer Engineering at National Institute of Technology Patna while contributing to production systems. Certified in AWS Cloud Practitioner and Oracle Cloud Infrastructure AI Foundations. Proficient in Git, Linux, and modern development workflows.",
+    "Looking to collaborate on AI-powered applications, backend optimization, and full-stack engineering challenges. Open to opportunities in AI engineering, backend development, and system architecture roles."
+  ],
+  "image": "https://res.cloudinary.com/dsmyka9cr/image/upload/v1778235248/WhatsApp_Image_2026-05-08_at_15.43.16_hkrbuz.jpg",
+  "resumeLink": "https://res.cloudinary.com/dsmyka9cr/image/upload/v1782059466/collageformateresume_vesbd5.pdf",
+  "learning": {
+    "technologies": [
+      "AI integration",
+      "Next.js 14",
+      "System Design"
+    ],
+    "note": "Currently deep diving into AI integration and system design things."
+  }
+}
