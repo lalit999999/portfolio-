@@ -45,7 +45,6 @@ export function ContactForm() {
     } else if (state.error) {
       toast.error(state.error.message);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state]);
 
   return (
