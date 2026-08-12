@@ -7,14 +7,11 @@
     "Currently pursuing B.Tech in Computer Engineering at National Institute of Technology Patna while contributing to production systems. Certified in AWS Cloud Practitioner and Oracle Cloud Infrastructure AI Foundations. Proficient in Git, Linux, and modern development workflows.",
     "Looking to collaborate on AI-powered applications, backend optimization, and full-stack engineering challenges. Open to opportunities in AI engineering, backend development, and system architecture roles."
   ],
-  "image": "https://res.cloudinary.com/dsmyka9cr/image/upload/v1778235248/WhatsApp_Image_2026-05-08_at_15.43.16_hkrbuz.jpg",
-  "resumeLink": "https://res.cloudinary.com/dsmyka9cr/image/upload/v1782059466/collageformateresume_vesbd5.pdf",
-  "learning": {
-    "technologies": [
-      "AI integration",
-      "Next.js 14",
-      "System Design"
-    ],
-    "note": "Currently deep diving into AI integration and system design things."
-  }
+  "avatarUrl": "https://res.cloudinary.com/dsmyka9cr/image/upload/v1778235248/WhatsApp_Image_2026-05-08_at_15.43.16_hkrbuz.jpg",
+  "resumeUrl": "https://res.cloudinary.com/dsmyka9cr/image/upload/v1782059466/collageformateresume_vesbd5.pdf",
+  "currentlyLearning": [
+    "AI integration",
+    "Next.js 14",
+    "System Design"
+  ]
 }

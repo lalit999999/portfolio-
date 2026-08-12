@@ -442,6 +442,7 @@ for (const entry of blogConfigurations) {
   seenHosts.add(entry.host);
 
   blogSources.push({
+    platform: "hashnode",
     name,
     host: entry.host,
     username: entry.username,
