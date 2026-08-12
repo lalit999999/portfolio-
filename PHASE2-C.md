@@ -123,16 +123,24 @@ come out.
   one-off pattern; flagging here since `npm run lint` isn't in the
   contract's "Done when" list but is worth a follow-up pass by whoever owns
   the eslint config.
-- **`npm run build` does not complete** — same blocker Session A already
-  flagged: `.env.local` still has `MONGODB_URI="mongodb+srv://..."`, the
-  Phase 1 placeholder. Build gets past compile and typecheck, then fails at
-  "Collecting page data" with `querySrv EBADNAME` while statically
-  generating `/projects/[slug]` (identical failure signature to Phase 1
-  Session C's `npm run dev` check against `/`). Since every route I own
-  exports `revalidate = 3600`, all of them need a real Atlas connection at
-  build time, not just the SSG project pages — so I can't confirm
-  `/projects/[slug]` actually generates one static page per seeded slug,
-  can't confirm real-data rendering at 360/768/1440, and can't confirm a
-  contact submission actually lands in Atlas. All of that is code-complete
-  and typechecks against the real model/schema shapes, but is unverified
-  against live data pending a real `MONGODB_URI`.
+- **Update**: `npm run build` was blocked earlier in this session by the
+  Phase 1 `MONGODB_URI` placeholder (`querySrv EBADNAME` while statically
+  generating `/projects/[slug]`, same failure signature as Phase 1 Session
+  C's `/` check). Session B seeded a local Mongo instance and pointed
+  `.env.local` at it (`mongodb://127.0.0.1:27017/portfolio`); re-ran
+  `npm run build` after that landed and it now **succeeds end to end** —
+  all 7 seeded project slugs prerender under `/projects/[slug]` (confirmed
+  in the route output, not assumed), plus `/`, `/projects`, `/skills`,
+  `/certifications`, `/blogs`, `/contact`, and `/motion-lab` all show as
+  static (`○`) or SSG (`●`) with `1h` revalidate.
+- Hit the already-running dev server directly (`curl`) against real seeded
+  data: `/projects`, `/projects/pollman-full-stack-real-time-poll-survey-
+  platform`, `/skills`, `/certifications`, `/blogs`, `/contact` all return
+  `200`; `/projects/does-not-exist` returns `404`, confirming
+  `dynamicParams = false` on the detail route actually 404s unknown slugs
+  rather than falling through. Did not do a manual click-through at
+  360/768/1440 in both themes myself — that's still worth someone doing
+  visually, but the routes are demonstrably rendering real data correctly.
+- Did not resubmit the contact form against the live local Mongo to see a
+  `Message` document land — the Server Action logic was verified by
+  typecheck and code review only.
