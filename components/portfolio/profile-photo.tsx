@@ -7,7 +7,12 @@ import { motion, useReducedMotion } from "motion/react";
 import type { SerializedProfile } from "@/types/models";
 import { getBrandIcon } from "@/lib/icons";
 import { cn } from "@/lib/utils";
-import { EASE_BACK_OUT, Orbit, Tilt, type OrbitItem } from "@/components/motion";
+import {
+  EASE_BACK_OUT,
+  Orbit,
+  Tilt,
+  type OrbitItem,
+} from "@/components/motion";
 
 const STACK_SLUGS = ["nodejs", "mongodb", "docker", "react"] as const;
 
@@ -71,23 +76,36 @@ export function ProfilePhoto({ profile, className }: ProfilePhotoProps) {
         aria-hidden
         className={cn(
           "absolute inset-0 scale-[1.15] rounded-full blur-2xl",
-          reduceMotion && "opacity-40"
+          reduceMotion && "opacity-40",
         )}
         style={
           reduceMotion
             ? glowStyle
-            : { ...glowStyle, animation: `${glowStyle.animation}, glow-breathe 4s ease-in-out infinite` }
+            : {
+                ...glowStyle,
+                animation: `${glowStyle.animation}, glow-breathe 4s ease-in-out infinite`,
+              }
         }
       />
 
-      <div aria-hidden className="absolute inset-0 rounded-full p-[3px]" style={ringStyle}>
+      <div
+        aria-hidden
+        className="absolute inset-0 rounded-full p-[3px]"
+        style={ringStyle}
+      >
         <div className="size-full rounded-full bg-background" />
       </div>
 
-      <Tilt max={12} disabled={!!reduceMotion} className="absolute inset-[6px] overflow-hidden rounded-full">
+      <Tilt
+        max={12}
+        disabled={!!reduceMotion}
+        className="absolute inset-[6px] overflow-hidden rounded-full"
+      >
         <motion.div
           initial={
-            reduceMotion ? false : { opacity: 0, scale: 0.8, filter: "blur(10px)" }
+            reduceMotion
+              ? false
+              : { opacity: 0, scale: 0.8, filter: "blur(10px)" }
           }
           animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
           transition={{ duration: 0.8, ease: EASE_BACK_OUT }}
