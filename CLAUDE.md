@@ -8,11 +8,15 @@ shadcn/ui component library already vendored into `components/ui/`.
 ## Current state (read this first)
 
 Phase 1 (data layer), Phase 2 (public site + animation system), and Phase 3 (GitHub
-auth + live playground) are merged. Ten public/auth routes render actual content: `/`,
-`/projects`, `/projects/[slug]`, `/skills`, `/certifications`, `/blogs`, `/contact`,
-`/playground`, `/login`, plus the dev-only `/motion-lab` harness. `/admin` is a
-middleware- and layout-guarded placeholder for the Phase 4 CMS. `app/layout.tsx` sets
-real metadata (title derived from the profile data, not the CNA default).
+auth + live playground) are merged into `main`. Ten public/auth routes render actual
+content: `/`, `/projects`, `/projects/[slug]`, `/skills`, `/certifications`, `/blogs`,
+`/contact`, `/playground`, `/login`, plus the dev-only `/motion-lab` harness.
+`app/layout.tsx` sets real metadata (title derived from the profile data, not the CNA
+default).
+
+**Branch `phase-4-a-foundation` (not yet merged) adds Phase 4 Step 0 scaffolding** —
+see "Phase 4 (in progress)" below. On `main`, `/admin` is still the middleware- and
+layout-guarded Phase 3 placeholder.
 
 Routes read from MongoDB via `lib/db.ts` / `models/**` (12 Mongoose models). Without a
 live `MONGODB_URI` (`.env.local`, gitignored) some routes will error — that's a
@@ -59,6 +63,7 @@ resolving yet.
 
 **Tailwind v4, CSS-first.** There is no `tailwind.config.js` and there should not be.
 All theming lives in `app/globals.css`:
+
 - `@theme inline` maps Tailwind tokens to CSS custom properties
 - `:root` / `.dark` define those properties as `oklch()` values
 - radius is a scale computed from a single `--radius: 0.75rem` (`rounded-4xl` etc. are
@@ -69,6 +74,7 @@ Avoid raw palette classes like `bg-zinc-50` — the CNA page uses them, but that
 placeholder code, not a pattern to copy.
 
 **Three primitive libraries coexist.** Don't consolidate them:
+
 - `radix-ui` (the unified package) — most components. Import as
   `import { Slot } from "radix-ui"`, **not** `@radix-ui/react-slot`.
 - `@base-ui/react` — `combobox.tsx` only
@@ -89,7 +95,7 @@ Adding a token means touching three places together, or a shadcn component will
 silently break: `:root`, `.dark`, and the `@theme inline` map (`--color-x: var(--x)`) at
 the top of `app/globals.css`. The active palette is warm orange (primary `oklch(0.72
 0.175 52)` in dark, `oklch(0.70 0.18 48)` in light) — `--primary-foreground` is
-deliberately near-black in *both* modes, since orange at a lightness that reads as
+deliberately near-black in _both_ modes, since orange at a lightness that reads as
 orange can't carry white text at 4.5:1. Don't "fix" that by putting white on primary.
 
 ## Auth
@@ -127,24 +133,73 @@ Required env vars beyond the Phase 1/2 set: `AUTH_SECRET`, `AUTH_GITHUB_ID`,
 username), `AUTH_TRUST_HOST="true"`. Do not add `NEXTAUTH_URL` / `NEXTAUTH_SECRET` —
 those are v4 names and NextAuth v5 silently ignores them.
 
+## Phase 4 (in progress)
+
+`phase-4-a-foundation` branch, Step 0 only (scaffolding to unblock later Phase 4
+sessions — the real admin build-out has not happened yet). Details in
+`docs/PHASE4-A.md`.
+
+- **New deps** (the only Phase 4 `npm install` so far): `react-hook-form`,
+  `@hookform/resolvers` (v5, required for Zod 4 — v3 does not support it),
+  `react-dnd` + `react-dnd-html5-backend`, `cloudinary` (Node SDK, server-side signing
+  only — never install `next-cloudinary`, its peer range stops at Next 15).
+- **Route groups**: `app/layout.tsx` is now minimal (html/body/fonts/`Providers`/
+  `Toaster` only). Former root-level site routes moved to `app/(site)/`, which has its
+  own `layout.tsx` carrying the chrome (`Navbar`, `Footer`, `DotGridBackground`,
+  `CommandPalette`). Route groups don't affect URLs. A route-group-only layout has no
+  `LayoutProps<route>` from Next's typed-routes generator (no URL segment of its own)
+  — hand-write `{ children: React.ReactNode }` for those, as `app/(site)/layout.tsx`
+  does.
+- **`/admin` vs `/lalit` — intentionally unreconciled right now.** The real, guarded
+  Phase 3 admin placeholder still lives at `/admin` (`middleware.ts` matcher is
+  `["/admin/:path*"]`). Step 0 additionally scaffolded 24 placeholder pages under
+  `app/(admin)/lalit/**` per the Phase 4 IA (site-owner's name instead of `/admin`,
+  for obscurity) — **these are not wired to middleware and are currently unguarded.**
+  Migrating the real implementation from `/admin` to `/lalit` (updating
+  `middleware.ts` and `auth.config.ts`'s `authorized` callback, then deleting the old
+  `app/admin/*`) is unstarted, later Phase 4 work.
+- **Frozen contracts for later sessions**: `types/admin.ts` (`AdminActionState`,
+  `AdminCollection`, `ReorderRequest`/`Response`, `UploadSignature`), `lib/admin/nav.ts`
+  (sidebar nav), `lib/admin/collections.ts` (`COLLECTION_REGISTRY`). Don't edit these
+  casually — other in-flight work reads them.
+- **`components/admin/**` are stubs** (`data-table.tsx`, `entity-form.tsx`,
+  `form-fields.tsx`, `image-uploader.tsx`, `sortable-list.tsx`, etc.) — real exported
+  signatures, placeholder bodies, each marked `// STUB — Phase 4 Session A owns this
+  file.` Real implementations are unstarted.
+- **New env vars**: `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`,
+  `CLOUDINARY_API_SECRET`, `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` (see `.env.example`).
+- **`revalidateTag` takes two arguments as of Next 16.3** — `revalidateTag(tag,
+  profile)`. The single-arg form is deprecated. `lib/admin/revalidate.ts` uses
+  `revalidateTag(tag, "max")`, matching Next's own recommended Server Action pattern.
+- **Standing rule, restated because it's easy to get wrong**: never run `npx
+  shadcn@latest init` (with or without a preset flag) on this repo, ever. It rewrites
+  `app/globals.css` and would destroy the finished theme. `components.json` already
+  has the right config (`style: "radix-luma"`, `baseColor: "stone"`); only `npx
+  shadcn@latest add <component>` is safe.
+
 ## Layout & conventions
 
 ```
-app/          routes, layout, globals.css
-app/admin/    middleware- + layout-guarded, Phase 4 placeholder
-app/playground/  public-read live chat, gated at the action level
+app/            root layout (minimal), globals.css, favicon
+app/(site)/     public/auth routes — has its own layout.tsx with the site chrome
+app/admin/      middleware- + layout-guarded, Phase 3 placeholder (main only)
+app/(admin)/lalit/  Phase 4 admin route group — Step 0 placeholders, unguarded so far
+app/playground/  (inside app/(site)/) public-read live chat, gated at the action level
 components/ui/  61 shadcn components — generated, treat as vendored
 components/motion/  12 motion primitives (Reveal, Stagger, Magnetic, Tilt, ...)
 components/auth/  SignInButton, UserMenu, AuthStatus
+components/admin/  Phase 4 admin primitives — stubs as of Step 0, see above
 hooks/        use-mobile.ts (768px breakpoint)
 lib/utils.ts  cn() = twMerge(clsx(...))
 lib/data/     cached fetchers per model, plus playground.ts (deliberately uncached)
+lib/admin/    Phase 4 admin registries — nav.ts, collections.ts, guard.ts, action.ts
 ```
 
 `@/*` resolves to the repo root, so `@/components/ui/button`, `@/lib/utils`.
 
 Component authoring follows the shadcn house style already visible in
 `components/ui/button.tsx`:
+
 - plain `function Foo()` declarations, not `React.forwardRef`
 - props typed as `React.ComponentProps<"button"> & VariantProps<typeof fooVariants>`
 - a `data-slot="foo"` attribute on every rendered element (used for styling hooks)

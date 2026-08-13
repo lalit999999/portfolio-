@@ -9,20 +9,27 @@ export default auth((req) => {
   const { pathname, search } = req.nextUrl;
   const session = req.auth;
 
+  // Let the sign-in page itself through unconditionally — guarding it would
+  // redirect an unauthenticated visitor to itself, looping forever.
+  if (pathname === "/lalit/signin") {
+    return NextResponse.next();
+  }
+
   if (!session?.user) {
     const callbackUrl = encodeURIComponent(pathname + search);
     return NextResponse.redirect(
-      new URL(`/login?callbackUrl=${callbackUrl}`, req.nextUrl)
+      new URL(`/lalit/signin?callbackUrl=${callbackUrl}`, req.nextUrl)
     );
   }
 
   if (session.user.role !== "admin") {
-    // Rewrite rather than redirect so a non-admin visiting /admin sees the
-    // homepage silently, instead of a distinct signal that /admin exists.
-    return NextResponse.rewrite(new URL("/", req.nextUrl));
+    // Rewrite (not redirect) to the 403 page: it serves the forbidden
+    // content for this one response without a second navigation, so it
+    // can't loop back through this same guard.
+    return NextResponse.rewrite(new URL("/lalit/403", req.nextUrl));
   }
 
   return NextResponse.next();
 });
 
-export const config = { matcher: ["/admin/:path*"] };
+export const config = { matcher: ["/lalit/:path*"] };
