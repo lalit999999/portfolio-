@@ -19,23 +19,23 @@ import {
   blogSourceCreateSchema,
   blogSourceUpdateSchema,
 } from "@/lib/validators/blogSource";
-import { BLOG_PLATFORMS } from "@/models/BlogSource";
-import type { SerializedBlogSource } from "@/types/models";
+import type { BlogPlatform, SerializedBlogSource } from "@/types/models";
 import {
   createBlogSource,
   updateBlogSource,
   testBlogSourceConnection,
 } from "./actions";
 
-const PLATFORM_OPTIONS = BLOG_PLATFORMS.map((p) => ({ label: p, value: p }));
-
 export function BlogSourceForm({
   source,
   isLastActive,
+  platforms,
 }: {
   source?: SerializedBlogSource;
   isLastActive: boolean;
+  platforms: readonly BlogPlatform[];
 }) {
+  const platformOptions = platforms.map((p) => ({ label: p, value: p }));
   const router = useRouter();
   const schema = source ? blogSourceUpdateSchema : blogSourceCreateSchema;
   const [isTesting, startTest] = useTransition();
@@ -78,7 +78,7 @@ export function BlogSourceForm({
               control={form.control}
               name="platform"
               label="Platform"
-              options={PLATFORM_OPTIONS}
+              options={platformOptions}
             />
             <TextField control={form.control} name="name" label="Display name" required />
             <TextField control={form.control} name="username" label="Username" required />
