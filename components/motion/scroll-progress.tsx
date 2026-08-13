@@ -20,7 +20,7 @@ export function ScrollProgress({ className, height = 2 }: ScrollProgressProps) {
     <motion.div
       aria-hidden
       className={cn(
-        "absolute inset-x-0 bottom-0 origin-left bg-gradient-to-r from-primary via-primary/80 to-primary/40",
+        "absolute inset-x-0 bottom-0 origin-left bg-gradient-to-r from-primary/90 via-primary/70 to-primary/35",
         className,
       )}
       style={{ height, scaleX: reduce ? scrollYProgress : smoothProgress }}

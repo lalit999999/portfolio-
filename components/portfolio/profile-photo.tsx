@@ -34,6 +34,15 @@ export function ProfilePhoto({ profile, className }: ProfilePhotoProps) {
     ...(reduceMotion ? {} : { animation: "ring-spin 8s linear infinite" }),
   };
 
+  // Saturated orange reads much hotter than the violet it replaced at the
+  // same alpha, so the blurred halo gets its own dimmer gradient — the
+  // crisp ring border above keeps full strength.
+  const glowStyle: CSSProperties = {
+    background:
+      "conic-gradient(from var(--ring-angle, 0deg), oklch(from var(--color-primary) l c h / 0.55), transparent 45%, oklch(from var(--color-primary) l c h / 0.55))",
+    ...(reduceMotion ? {} : { animation: "ring-spin 8s linear infinite" }),
+  };
+
   const orbitItems: OrbitItem[] = STACK_SLUGS.map((slug) => {
     const icon = getBrandIcon(slug);
     return {
@@ -66,8 +75,8 @@ export function ProfilePhoto({ profile, className }: ProfilePhotoProps) {
         )}
         style={
           reduceMotion
-            ? ringStyle
-            : { ...ringStyle, animation: `${ringStyle.animation}, glow-breathe 4s ease-in-out infinite` }
+            ? glowStyle
+            : { ...glowStyle, animation: `${glowStyle.animation}, glow-breathe 4s ease-in-out infinite` }
         }
       />
 

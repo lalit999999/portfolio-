@@ -19,7 +19,7 @@ export function Shine({ className, duration = 700 }: ShineProps) {
     <span
       aria-hidden
       className={cn(
-        "pointer-events-none absolute inset-0 -translate-x-full skew-x-12 bg-gradient-to-r from-transparent via-primary/20 to-transparent opacity-0 transition-[transform,opacity] group-hover:translate-x-full group-hover:opacity-100",
+        "pointer-events-none absolute inset-0 -translate-x-full skew-x-12 bg-gradient-to-r from-transparent via-primary/14 to-transparent opacity-0 transition-[transform,opacity] group-hover:translate-x-full group-hover:opacity-100",
         className,
       )}
       style={{
