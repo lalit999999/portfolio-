@@ -1,4 +1,6 @@
-// STUB — Phase 4 Session A owns this file. Do not edit it from another session.
+// Placeholder — per-collection admin UI is outside Session A's scope
+// (auth, shell, shared primitives). Real content lands with this collection's
+// admin page in a later session.
 import { Hammer } from "lucide-react";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";

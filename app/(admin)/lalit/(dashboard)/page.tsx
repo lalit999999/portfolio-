@@ -1,30 +1,47 @@
-// STUB — Phase 4 Session A owns this file. Do not edit it from another session.
-import { Hammer } from "lucide-react";
-
+import { COLLECTION_REGISTRY } from "@/lib/admin/collections";
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
-import {
-  Empty,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-  EmptyDescription,
-} from "@/components/ui/empty";
+import { StatCard } from "@/components/admin/stat-card";
+import type { AdminCollection, AdminStatCard } from "@/types/admin";
 
-export default async function Page(props: PageProps<"/lalit">) {
-  await props.params;
+const DASHBOARD_COLLECTIONS: AdminCollection[] = [
+  "projects",
+  "skills",
+  "certifications",
+  "educations",
+  "socials",
+  "blogsources",
+];
+
+export default async function Page() {
+  const counts = await Promise.all(
+    DASHBOARD_COLLECTIONS.map((key) =>
+      COLLECTION_REGISTRY[key].model.countDocuments()
+    )
+  );
+
+  const stats: AdminStatCard[] = DASHBOARD_COLLECTIONS.map((key, i) => ({
+    key,
+    label: COLLECTION_REGISTRY[key].label,
+    value: counts[i],
+  }));
 
   return (
     <div className="flex flex-col gap-6">
-      <AdminPageHeader title="Dashboard" />
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <Hammer aria-hidden />
-          </EmptyMedia>
-          <EmptyTitle>Coming in Phase 4</EmptyTitle>
-          <EmptyDescription>This section is not built yet.</EmptyDescription>
-        </EmptyHeader>
-      </Empty>
+      <AdminPageHeader
+        title="Dashboard"
+        description="An overview of the site's content."
+      />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {stats.map((stat) => (
+          <StatCard
+            key={stat.key}
+            label={stat.label}
+            value={stat.value}
+            hint={stat.hint}
+            href={stat.href}
+          />
+        ))}
+      </div>
     </div>
   );
 }
