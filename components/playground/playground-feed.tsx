@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useOptimistic, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useOptimistic, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { toast } from "sonner";
 
@@ -47,8 +47,12 @@ export function PlaygroundFeed({
   className,
 }: PlaygroundFeedProps) {
   const reduce = useReducedMotion();
+  // Messages this browser knows about directly: the initial server render
+  // plus anything a successful post added immediately (poll would also
+  // eventually deliver it, but this makes the sender's own copy instant).
   const [messages, setMessages] = useState(() => mergeById([], initialMessages));
   const [failedMessages, setFailedMessages] = useState<PlaygroundFeedItem[]>([]);
+  const [deletedIds, setDeletedIds] = useState<ReadonlySet<string>>(() => new Set());
   const [unreadCount, setUnreadCount] = useState(0);
   const hasToastedPollErrorRef = useRef(false);
 
@@ -57,21 +61,23 @@ export function PlaygroundFeed({
   // carries no id of its own — knows which row to re-show as failed.
   const pendingQueueRef = useRef<PlaygroundFeedItem[]>([]);
 
-  const [optimisticMessages, addOptimisticMessage] = useOptimistic(
-    messages,
-    (state, provisional: PlaygroundFeedItem) => mergeById(state, [provisional])
-  );
-
   const initialSince = initialMessages.at(-1)?.createdAt ?? new Date().toISOString();
   const { items: polledItems, error: pollError, poll } = useVisibilityPoll<PlaygroundFeedItem>(
     fetchNewMessages,
     { intervalMs: pollIntervalMs, initialSince }
   );
 
-  useEffect(() => {
-    if (polledItems.length === 0) return;
-    setMessages((prev) => mergeById(prev, polledItems));
-  }, [polledItems]);
+  // Poll results merge in during render (derived state), not via an Effect
+  // mirror — polledItems only ever grows, so this is cheap and idempotent.
+  const baseMessages = useMemo(() => {
+    const merged = mergeById(messages, polledItems);
+    return deletedIds.size === 0 ? merged : merged.filter((m) => !deletedIds.has(m._id));
+  }, [messages, polledItems, deletedIds]);
+
+  const [optimisticMessages, addOptimisticMessage] = useOptimistic(
+    baseMessages,
+    (state, provisional: PlaygroundFeedItem) => mergeById(state, [provisional])
+  );
 
   useEffect(() => {
     if (!pollError) {
@@ -89,7 +95,6 @@ export function PlaygroundFeed({
   const scrollRef = useRef<HTMLDivElement>(null);
   const isNearBottomRef = useRef(true);
   const prevLengthRef = useRef(rendered.length);
-  const seenIdsRef = useRef<Set<string>>(new Set(initialMessages.map((m) => m._id)));
 
   const scrollToBottom = useCallback(
     (smooth: boolean) => {
@@ -139,35 +144,35 @@ export function PlaygroundFeed({
     [addOptimisticMessage]
   );
 
-  const handleSettled = useCallback((real: PlaygroundFeedItem | null) => {
-    const provisional = pendingQueueRef.current.shift();
-    if (real) {
-      // Pre-mark as "seen" so the temp row's fade-in isn't immediately
-      // followed by a second fade-in for the real row that replaces it.
-      seenIdsRef.current.add(real._id);
-      setMessages((prev) => mergeById(prev, [real]));
-      poll();
-    } else if (provisional) {
-      setFailedMessages((prev) => [...prev, provisional]);
-    }
-  }, [poll]);
-
-  const handleDelete = useCallback(
-    async (id: string) => {
-      if (id.startsWith("temp-")) {
-        setFailedMessages((prev) => prev.filter((m) => m._id !== id));
-        return;
-      }
-      const previous = messages;
-      setMessages((prev) => prev.filter((m) => m._id !== id));
-      const result = await deleteMessage(id);
-      if (!result.ok) {
-        setMessages(previous);
-        toast.error(result.message);
+  const handleSettled = useCallback(
+    (real: PlaygroundFeedItem | null) => {
+      const provisional = pendingQueueRef.current.shift();
+      if (real) {
+        setMessages((prev) => mergeById(prev, [real]));
+        poll();
+      } else if (provisional) {
+        setFailedMessages((prev) => [...prev, provisional]);
       }
     },
-    [messages]
+    [poll]
   );
+
+  const handleDelete = useCallback(async (id: string) => {
+    if (id.startsWith("temp-")) {
+      setFailedMessages((prev) => prev.filter((m) => m._id !== id));
+      return;
+    }
+    setDeletedIds((prev) => new Set(prev).add(id));
+    const result = await deleteMessage(id);
+    if (!result.ok) {
+      setDeletedIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
+      toast.error(result.message);
+    }
+  }, []);
 
   const isEmpty = rendered.length === 0;
 
@@ -186,32 +191,22 @@ export function PlaygroundFeed({
           rendered.map((message, index) => {
             const isFailed = failedIds.has(message._id);
             const isPending = message._id.startsWith("temp-") && !isFailed;
-            const isNew = !seenIdsRef.current.has(message._id);
-
-            const content = (
-              <MessageCard
-                message={message}
-                viewer={viewer}
-                pending={isPending}
-                failed={isFailed}
-                onDelete={handleDelete}
-                index={index}
-              />
-            );
-
-            if (!isNew || reduce) {
-              return <div key={message._id}>{content}</div>;
-            }
 
             return (
               <motion.div
                 key={message._id}
-                initial={{ opacity: 0, y: 12 }}
+                initial={reduce ? { opacity: 1 } : { opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                onAnimationComplete={() => seenIdsRef.current.add(message._id)}
               >
-                {content}
+                <MessageCard
+                  message={message}
+                  viewer={viewer}
+                  pending={isPending}
+                  failed={isFailed}
+                  onDelete={handleDelete}
+                  index={index}
+                />
               </motion.div>
             );
           })

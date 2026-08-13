@@ -35,8 +35,16 @@ const initialState: PlaygroundActionState = { status: "idle" };
 function useCountdown(retryAfterMs: number | undefined) {
   const [remainingMs, setRemainingMs] = useState(retryAfterMs ?? 0);
 
-  useEffect(() => {
+  // Reset the countdown whenever a new retryAfterMs comes in, without an
+  // Effect: React's sanctioned way to adjust state in response to a changed
+  // value is a guarded setState call during render, not an Effect mirror.
+  const [trackedRetry, setTrackedRetry] = useState(retryAfterMs);
+  if (trackedRetry !== retryAfterMs) {
+    setTrackedRetry(retryAfterMs);
     setRemainingMs(retryAfterMs ?? 0);
+  }
+
+  useEffect(() => {
     if (!retryAfterMs) return;
 
     const start = Date.now();
@@ -95,9 +103,13 @@ export function Composer({ viewer, onOptimistic, onSettled, className }: Compose
     }
   }, [state]);
 
-  useEffect(() => {
+  // Same render-time-adjust pattern as useCountdown: clear the draft the
+  // moment a fresh success state arrives, without a setState-in-Effect.
+  const [lastHandledState, setLastHandledState] = useState(state);
+  if (lastHandledState !== state) {
+    setLastHandledState(state);
     if (state.status === "success") setContent("");
-  }, [state]);
+  }
 
   if (!viewer) {
     return (

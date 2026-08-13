@@ -33,7 +33,9 @@ export function useVisibilityPoll<T extends { createdAt: string }>(
 
   const sinceRef = useRef(initialSince);
   const fetcherRef = useRef(fetcher);
-  fetcherRef.current = fetcher;
+  useEffect(() => {
+    fetcherRef.current = fetcher;
+  });
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const controllerRef = useRef<AbortController | null>(null);
@@ -89,7 +91,9 @@ export function useVisibilityPoll<T extends { createdAt: string }>(
       });
   }, [clearTimer, intervalMs, scheduleNext]);
 
-  runPollRef.current = runPoll;
+  useEffect(() => {
+    runPollRef.current = runPoll;
+  });
 
   useEffect(() => {
     mountedRef.current = true;
