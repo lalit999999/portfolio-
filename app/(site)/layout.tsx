@@ -1,10 +1,18 @@
+import type * as React from "react";
+
 import { getBlogSources, getProfile, getProjects, getSocials } from "@/lib/data";
 import { Navbar } from "@/components/site/navbar";
 import { Footer } from "@/components/site/footer";
 import { CommandPalette } from "@/components/site/command-palette";
 import { DotGridBackground } from "@/components/site/dot-grid-background";
 
-export default async function SiteLayout({ children }: LayoutProps<"/(site)">) {
+// Route-group-only layouts have no URL segment of their own, so Next's typed-routes
+// generator doesn't emit a LayoutRoutes entry for them — hand-write the props type.
+export default async function SiteLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [profile, socials, projects, blogSources] = await Promise.all([
     getProfile(),
     getSocials(),
