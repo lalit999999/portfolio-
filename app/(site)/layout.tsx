@@ -4,7 +4,7 @@ import { Footer } from "@/components/site/footer";
 import { CommandPalette } from "@/components/site/command-palette";
 import { DotGridBackground } from "@/components/site/dot-grid-background";
 
-export default async function SiteLayout({ children }: LayoutProps<"/(site)">) {
+export default async function SiteLayout({ children }: LayoutProps<"/">) {
   const [profile, socials, projects, blogSources] = await Promise.all([
     getProfile(),
     getSocials(),
