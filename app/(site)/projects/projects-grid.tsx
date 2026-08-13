@@ -46,9 +46,14 @@ export function ProjectsGrid({ projects }: ProjectsGridProps) {
 
   // Filter state lives client-side; this only restores it from the URL after
   // mount so shareable links work without opting the page out of static
-  // rendering (reading searchParams server-side would do that).
+  // rendering (reading searchParams server-side would do that). Deliberately
+  // an Effect, not a lazy useState initializer: window.location must not be
+  // read during the hydration render or it'd diverge from the SSR output
+  // (which always renders the empty defaults) and trigger a hydration
+  // mismatch — the "hydrated" gate below exists for the same reason.
   useEffect(() => {
     const initial = readStateFromLocation();
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setQuery(initial.q);
     setCategory(initial.category);
     setSelectedTech(new Set(initial.tech));
