@@ -113,6 +113,18 @@ or worked around without touching another session's frozen file — see each ent
   `mongoose`/`mongodb` into the browser bundle (`Module not found: 'tls'`/`'net'`).
   **Fixed:** pass `platforms` down as a prop from the two server-component pages instead.
 
+## Security gap found, not fixed (Session A's file)
+
+**`middleware.ts`'s matcher is still `["/admin/:path*"]`**, stale from before the admin
+routes moved to `/lalit/*` in Session A's Step 0 restructuring. Confirmed live: every
+`/lalit/*` page (verified `/lalit/profile`, `/lalit/socials`, `/lalit/blog-sources`,
+`/lalit/inbox`, `/lalit/playground`) returns `200` to an unauthenticated `curl`, no
+redirect to `/login`. Mutations are still safe — every Session C server action calls
+`requireAdmin()` as its first line, verified by grep — but **page views currently leak
+to anyone who knows the URL**: contact message content, playground member lists, etc.
+`middleware.ts` is explicitly Session A's file (auth stack), so this wasn't fixed here;
+flagging it as the most important open item for Session A/Lalit before this merges.
+
 ## Known gaps carried over
 
 - **Socials drag-reorder needs Session A's real `SortableList`.** Currently a static
@@ -124,3 +136,8 @@ or worked around without touching another session's frozen file — see each ent
   against the public footer and nav — `app/(site)/layout.tsx` exists and typechecks on
   this branch (after the `LayoutProps` fix above), but wasn't checked in a running
   browser against these changes.
+- **Dark/light visual review and an authenticated click-through (edit tagline → confirm
+  `/` reflects it) weren't done.** `npm run build`/`lint` pass and a smoke test confirmed
+  every `/lalit/*` route renders without a server error (see the security note above for
+  how that smoke test was possible unauthenticated), but real GitHub OAuth sign-in
+  wasn't available in this environment to drive an authenticated browser session.
