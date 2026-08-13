@@ -1,30 +1,41 @@
-// STUB — Phase 4 Session A owns this file. Do not edit it from another session.
-import { Hammer } from "lucide-react";
-
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
-import {
-  Empty,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-  EmptyDescription,
-} from "@/components/ui/empty";
+import { CertificationForm } from "../certification-form";
+import { getNextCertificationOrder } from "@/lib/admin/certifications";
+import { requireAdmin } from "@/lib/admin/guard";
 
-export default async function Page(props: PageProps<"/lalit/certifications/new">) {
+import { createCertification } from "../actions";
+
+export default async function Page(
+  props: PageProps<"/lalit/certifications/new">
+) {
   await props.params;
+  await requireAdmin();
+
+  const order = await getNextCertificationOrder();
 
   return (
     <div className="flex flex-col gap-6">
-      <AdminPageHeader title="New certification" />
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <Hammer aria-hidden />
-          </EmptyMedia>
-          <EmptyTitle>Coming in Phase 4</EmptyTitle>
-          <EmptyDescription>This section is not built yet.</EmptyDescription>
-        </EmptyHeader>
-      </Empty>
+      <AdminPageHeader
+        title="New certification"
+        description="Add a certification to the portfolio."
+      />
+      <CertificationForm
+        mode="create"
+        defaultValues={{
+          title: "",
+          issuer: "",
+          issueDate: new Date(),
+          expiryDate: undefined,
+          credentialId: "",
+          credentialUrl: "",
+          imageUrl: "",
+          skills: [],
+          color: "info",
+          order,
+          isVisible: true,
+        }}
+        action={createCertification}
+      />
     </div>
   );
 }
