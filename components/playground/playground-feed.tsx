@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useOptimistic, useRef, useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
@@ -218,11 +218,13 @@ export function PlaygroundFeed({
         )}
       </div>
 
-      {unreadCount > 0 ? (
-        <div className="sticky bottom-2 z-10 flex justify-center">
-          <NewMessagesPill count={unreadCount} onClick={handleJumpToBottom} />
-        </div>
-      ) : null}
+      <AnimatePresence>
+        {unreadCount > 0 ? (
+          <div className="sticky bottom-2 z-10 flex justify-center">
+            <NewMessagesPill count={unreadCount} onClick={handleJumpToBottom} />
+          </div>
+        ) : null}
+      </AnimatePresence>
 
       <Composer viewer={viewer} onOptimistic={handleOptimistic} onSettled={handleSettled} />
     </div>
