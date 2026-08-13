@@ -1,8 +1,22 @@
 "use client";
 
-import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
+import { useRef, useSyncExternalStore, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring } from "motion/react";
 import { SPRING_SOFT } from "./tokens";
+
+function subscribeCoarsePointer(onChange: () => void) {
+  const mql = window.matchMedia("(pointer: coarse)");
+  mql.addEventListener("change", onChange);
+  return () => mql.removeEventListener("change", onChange);
+}
+
+function getCoarsePointerSnapshot() {
+  return window.matchMedia("(pointer: coarse)").matches;
+}
+
+function getCoarsePointerServerSnapshot() {
+  return false;
+}
 
 export interface TiltProps {
   children: ReactNode;
@@ -19,11 +33,11 @@ export function Tilt({ children, max = 12, perspective = 1000, className, disabl
   const rotateY = useMotionValue(0);
   const springRotateX = useSpring(rotateX, SPRING_SOFT);
   const springRotateY = useSpring(rotateY, SPRING_SOFT);
-  const [isCoarsePointer, setIsCoarsePointer] = useState(false);
-
-  useEffect(() => {
-    setIsCoarsePointer(window.matchMedia("(pointer: coarse)").matches);
-  }, []);
+  const isCoarsePointer = useSyncExternalStore(
+    subscribeCoarsePointer,
+    getCoarsePointerSnapshot,
+    getCoarsePointerServerSnapshot
+  );
 
   // Tilt on a touch device is just jitter, so touch and disabled both skip
   // attaching listeners entirely rather than merely animating to nothing.

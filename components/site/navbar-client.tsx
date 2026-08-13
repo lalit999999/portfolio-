@@ -55,9 +55,14 @@ export function NavbarClient({ name, navItems, authStatus }: NavbarClientProps) 
     lastY.current = y;
   });
 
-  React.useEffect(() => {
+  // Close the mobile menu on route change without an Effect — adjusting
+  // state during render, gated on a stored "previous" value, is React's own
+  // documented pattern for this (avoids the extra post-commit render pass).
+  const [prevPathname, setPrevPathname] = React.useState(pathname);
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
     setMobileOpen(false);
-  }, [pathname]);
+  }
 
   return (
     <motion.header

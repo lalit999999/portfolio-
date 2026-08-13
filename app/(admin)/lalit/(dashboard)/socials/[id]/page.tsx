@@ -1,4 +1,6 @@
-// STUB — Phase 4 Session A owns this file. Do not edit it from another session.
+// Placeholder — per-collection admin UI is outside Session A's scope
+// (auth, shell, shared primitives). Real content lands with this collection's
+// admin page in a later session.
 import { Hammer } from "lucide-react";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
@@ -10,12 +12,12 @@ import {
   EmptyDescription,
 } from "@/components/ui/empty";
 
-export default async function Page(props: PageProps<"/lalit/inbox/[id]">) {
+export default async function Page(props: PageProps<"/lalit/socials/[id]">) {
   await props.params;
 
   return (
     <div className="flex flex-col gap-6">
-      <AdminPageHeader title="Message" />
+      <AdminPageHeader title="Edit social link" />
       <Empty>
         <EmptyHeader>
           <EmptyMedia variant="icon">
