@@ -72,7 +72,7 @@ export function NavbarClient({ name, navItems }: NavbarClientProps) {
         )}
         style={{
           boxShadow:
-            "0 10px 40px -20px oklch(from var(--color-foreground) l c h / 0.3)",
+            "0 10px 40px -20px color-mix(in oklch, var(--color-foreground), transparent 85%)",
         }}
       >
         <div

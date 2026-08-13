@@ -11,7 +11,7 @@ export const certificationSchema = z.object({
   credentialUrl: z.string().url().optional().or(z.literal("")),
   imageUrl: z.string().url().optional().or(z.literal("")),
   skills: z.array(z.string()).default([]),
-  color: z.enum(CERT_COLORS).default("blue"),
+  color: z.enum(CERT_COLORS).default("info"),
   order: z.number().int(),
   isVisible: z.boolean().default(true),
   createdAt: z.coerce.date().optional(),

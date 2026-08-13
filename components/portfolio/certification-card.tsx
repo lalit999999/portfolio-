@@ -20,7 +20,9 @@ export function CertificationCard({
   index = 0,
   className,
 }: CertificationCardProps) {
-  const accent = certColorMap[certification.color];
+  // certColorMap only covers the current CertColor union; documents seeded
+  // under the old palette-name enum (pre-migration) won't have a match.
+  const accent = certColorMap[certification.color] ?? certColorMap.neutral;
   const issueDate = format(new Date(certification.issueDate), "MMMM yyyy");
 
   return (

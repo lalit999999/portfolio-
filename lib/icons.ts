@@ -148,6 +148,7 @@ import {
   siYoutube,
   type SimpleIcon,
 } from "simple-icons";
+import type { CertColor } from "@/models/Certification";
 
 export const iconMap: Record<string, LucideIcon> = {
   Activity,
@@ -314,40 +315,41 @@ export function getBrandIcon(name: string): SimpleIcon | null {
   return brandIconMap[key] ?? null;
 }
 
-export type CertColor = "emerald" | "blue" | "purple" | "amber" | "rose" | "cyan";
-
+// Token-derived, not raw palette classes, so these follow the active theme.
+// chart-2/4/5 are reused for warning/info/success since they're already
+// tuned as a readable, distinguishable series (see app/globals.css).
 export const certColorMap: Record<
   CertColor,
   { bg: string; text: string; border: string }
 > = {
-  emerald: {
-    bg: "bg-emerald-500/10",
-    text: "text-emerald-500",
-    border: "border-emerald-500/20",
+  primary: {
+    bg: "bg-primary/10",
+    text: "text-primary",
+    border: "border-primary/20",
   },
-  blue: {
-    bg: "bg-blue-500/10",
-    text: "text-blue-500",
-    border: "border-blue-500/20",
+  accent: {
+    bg: "bg-accent",
+    text: "text-accent-foreground",
+    border: "border-accent-foreground/20",
   },
-  purple: {
-    bg: "bg-purple-500/10",
-    text: "text-purple-500",
-    border: "border-purple-500/20",
+  success: {
+    bg: "bg-chart-5/10",
+    text: "text-chart-5",
+    border: "border-chart-5/20",
   },
-  amber: {
-    bg: "bg-amber-500/10",
-    text: "text-amber-500",
-    border: "border-amber-500/20",
+  warning: {
+    bg: "bg-chart-2/10",
+    text: "text-chart-2",
+    border: "border-chart-2/20",
   },
-  rose: {
-    bg: "bg-rose-500/10",
-    text: "text-rose-500",
-    border: "border-rose-500/20",
+  info: {
+    bg: "bg-chart-4/10",
+    text: "text-chart-4",
+    border: "border-chart-4/20",
   },
-  cyan: {
-    bg: "bg-cyan-500/10",
-    text: "text-cyan-500",
-    border: "border-cyan-500/20",
+  neutral: {
+    bg: "bg-muted",
+    text: "text-muted-foreground",
+    border: "border-border",
   },
 };
