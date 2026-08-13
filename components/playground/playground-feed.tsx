@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 import { cn } from "@/lib/utils";
 import { useVisibilityPoll } from "@/hooks/use-visibility-poll";
-import { deleteMessage } from "@/app/playground/actions";
+import { deleteMessage } from "@/app/(site)/playground/actions";
 import { MessageCard } from "./message-card";
 import { Composer } from "./composer";
 import { EmptyFeed } from "./empty-feed";

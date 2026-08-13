@@ -19,7 +19,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { postMessage } from "@/app/playground/actions";
+import { postMessage } from "@/app/(site)/playground/actions";
 import { PLAYGROUND_MAX_LENGTH } from "@/types/playground";
 import type { PlaygroundActionState, PlaygroundFeedItem, PlaygroundViewer } from "@/types/playground";
 
