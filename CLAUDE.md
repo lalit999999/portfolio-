@@ -14,9 +14,10 @@ content: `/`, `/projects`, `/projects/[slug]`, `/skills`, `/certifications`, `/b
 `app/layout.tsx` sets real metadata (title derived from the profile data, not the CNA
 default).
 
-**Branch `phase-4-a-foundation` (not yet merged) adds Phase 4 Step 0 scaffolding** —
-see "Phase 4 (in progress)" below. On `main`, `/admin` is still the middleware- and
-layout-guarded Phase 3 placeholder.
+**Branch `phase-4-a-foundation` (not yet merged) adds real `/lalit` auth, a real admin
+shell, and real shared admin primitives** — see "Phase 4 (in progress)" below. On
+`main`, `/admin` is still the middleware- and layout-guarded Phase 3 placeholder; on
+this branch `/admin` no longer exists at all, superseded by `/lalit`.
 
 Routes read from MongoDB via `lib/db.ts` / `models/**` (12 Mongoose models). Without a
 live `MONGODB_URI` (`.env.local`, gitignored) some routes will error — that's a
@@ -135,42 +136,62 @@ those are v4 names and NextAuth v5 silently ignores them.
 
 ## Phase 4 (in progress)
 
-`phase-4-a-foundation` branch, Step 0 only (scaffolding to unblock later Phase 4
-sessions — the real admin build-out has not happened yet). Details in
-`docs/PHASE4-A.md`.
+`phase-4-a-foundation` branch. Auth, the admin shell, and the shared admin primitives
+are real; per-collection admin CRUD pages are not (that's later work — see below).
+Details and decisions in `docs/PHASE4-A.md`.
 
-- **New deps** (the only Phase 4 `npm install` so far): `react-hook-form`,
+- **New deps** (the only Phase 4 `npm install`): `react-hook-form`,
   `@hookform/resolvers` (v5, required for Zod 4 — v3 does not support it),
   `react-dnd` + `react-dnd-html5-backend`, `cloudinary` (Node SDK, server-side signing
   only — never install `next-cloudinary`, its peer range stops at Next 15).
-- **Route groups**: `app/layout.tsx` is now minimal (html/body/fonts/`Providers`/
-  `Toaster` only). Former root-level site routes moved to `app/(site)/`, which has its
-  own `layout.tsx` carrying the chrome (`Navbar`, `Footer`, `DotGridBackground`,
-  `CommandPalette`). Route groups don't affect URLs. A route-group-only layout has no
-  `LayoutProps<route>` from Next's typed-routes generator (no URL segment of its own)
-  — hand-write `{ children: React.ReactNode }` for those, as `app/(site)/layout.tsx`
-  does.
-- **`/admin` vs `/lalit` — intentionally unreconciled right now.** The real, guarded
-  Phase 3 admin placeholder still lives at `/admin` (`middleware.ts` matcher is
-  `["/admin/:path*"]`). Step 0 additionally scaffolded 24 placeholder pages under
-  `app/(admin)/lalit/**` per the Phase 4 IA (site-owner's name instead of `/admin`,
-  for obscurity) — **these are not wired to middleware and are currently unguarded.**
-  Migrating the real implementation from `/admin` to `/lalit` (updating
-  `middleware.ts` and `auth.config.ts`'s `authorized` callback, then deleting the old
-  `app/admin/*`) is unstarted, later Phase 4 work.
-- **Frozen contracts for later sessions**: `types/admin.ts` (`AdminActionState`,
-  `AdminCollection`, `ReorderRequest`/`Response`, `UploadSignature`), `lib/admin/nav.ts`
-  (sidebar nav), `lib/admin/collections.ts` (`COLLECTION_REGISTRY`). Don't edit these
-  casually — other in-flight work reads them.
-- **`components/admin/**` are stubs** (`data-table.tsx`, `entity-form.tsx`,
-  `form-fields.tsx`, `image-uploader.tsx`, `sortable-list.tsx`, etc.) — real exported
-  signatures, placeholder bodies, each marked `// STUB — Phase 4 Session A owns this
-  file.` Real implementations are unstarted.
+- **Route groups**: `app/layout.tsx` is minimal (html/body/fonts/`Providers`/
+  `Toaster` only). Site routes live in `app/(site)/`, which has its own `layout.tsx`
+  carrying the chrome (`Navbar`, `Footer`, `DotGridBackground`, `CommandPalette`).
+  Admin routes live in `app/(admin)/lalit/`. Route groups don't affect URLs. A
+  route-group-only layout has no `LayoutProps<route>` from Next's typed-routes
+  generator (no URL segment of its own) — hand-write `{ children: React.ReactNode }`
+  for those, as `app/(site)/layout.tsx` and `app/(admin)/lalit/(dashboard)/layout.tsx`
+  both do.
+- **`/admin` is gone, superseded by `/lalit`.** The Phase 3 placeholder at `/admin`
+  was deleted; all admin routes live under `/lalit` now (site-owner's name instead of
+  `/admin`, for obscurity — a deliberate Phase 4 IA choice, not a typo).
+  `middleware.ts` guards `["/lalit/:path*"]`: unauthenticated → redirect to
+  `/lalit/signin?callbackUrl=...` (with `/lalit/signin` itself let through
+  unconditionally, or it'd redirect to itself forever); authenticated non-admin →
+  `NextResponse.rewrite` to `/lalit/403` (rewrite, not redirect, so a rewritten
+  response can't loop back through the same guard). `app/(admin)/lalit/signin/` and
+  `.../403/` are siblings of `app/(admin)/lalit/(dashboard)/`, not inside it — the
+  `(dashboard)` group is what actually carries the `requireAdmin()` guard + sidebar
+  shell, and signin/403 must stay outside that or visiting them would trigger the
+  guard they exist to handle.
+- **Frozen contracts**: `types/admin.ts` (`AdminActionState`, `AdminCollection`,
+  `ReorderRequest`/`Response`, `UploadSignature`), `lib/admin/nav.ts` (sidebar nav),
+  `lib/admin/collections.ts` (`COLLECTION_REGISTRY`, the only place a `reorder`
+  request's `collection` field is trusted from — always validated against this
+  enum, never interpolated from client input).
+- **`components/admin/**` are real**, not stubs: `data-table.tsx` (client-side
+  sort/search/paginate over an in-memory array — click-driven pagination, not
+  URL-driven), `entity-form.tsx` (react-hook-form + Zod, pending state, field-error
+  mapping, toast, dirty-reset, `beforeunload` guard), `form-fields.tsx`,
+  `image-uploader.tsx`/`FileUploader` (real Cloudinary upload via
+  `app/api/admin/upload`, `XMLHttpRequest` for real progress percentages),
+  `sortable-list.tsx` (real `react-dnd` drag via `app/api/admin/reorder`, with
+  keyboard up/down buttons on every row since the HTML5 DnD backend has no touch
+  support), `row-actions.tsx`, `confirm-dialog.tsx`, `admin-page-header.tsx`,
+  `stat-card.tsx`. The 23 non-dashboard pages under `(dashboard)/**` that *use* these
+  primitives are still "Coming in Phase 4" placeholders — building real per-collection
+  CRUD UI is deliberately out of this session's scope (foundation only), left for
+  later work.
 - **New env vars**: `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`,
-  `CLOUDINARY_API_SECRET`, `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` (see `.env.example`).
+  `CLOUDINARY_API_SECRET`, `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` (see `.env.example`) —
+  without these `/api/admin/upload` 500s.
 - **`revalidateTag` takes two arguments as of Next 16.3** — `revalidateTag(tag,
   profile)`. The single-arg form is deprecated. `lib/admin/revalidate.ts` uses
   `revalidateTag(tag, "max")`, matching Next's own recommended Server Action pattern.
+- **react-dnd ref callbacks**: connect with `ref={(node) => { drag(node); }}`, not
+  `ref={drag}` directly — react-dnd v16's connector return type doesn't structurally
+  satisfy a plain ref-callback signature, and calling the connector directly during
+  render also trips the `react-hooks/refs` lint rule.
 - **Standing rule, restated because it's easy to get wrong**: never run `npx
   shadcn@latest init` (with or without a preset flag) on this repo, ever. It rewrites
   `app/globals.css` and would destroy the finished theme. `components.json` already
@@ -180,19 +201,20 @@ sessions — the real admin build-out has not happened yet). Details in
 ## Layout & conventions
 
 ```
-app/            root layout (minimal), globals.css, favicon
-app/(site)/     public/auth routes — has its own layout.tsx with the site chrome
-app/admin/      middleware- + layout-guarded, Phase 3 placeholder (main only)
-app/(admin)/lalit/  Phase 4 admin route group — Step 0 placeholders, unguarded so far
-app/playground/  (inside app/(site)/) public-read live chat, gated at the action level
-components/ui/  61 shadcn components — generated, treat as vendored
-components/motion/  12 motion primitives (Reveal, Stagger, Magnetic, Tilt, ...)
-components/auth/  SignInButton, UserMenu, AuthStatus
-components/admin/  Phase 4 admin primitives — stubs as of Step 0, see above
-hooks/        use-mobile.ts (768px breakpoint)
-lib/utils.ts  cn() = twMerge(clsx(...))
-lib/data/     cached fetchers per model, plus playground.ts (deliberately uncached)
-lib/admin/    Phase 4 admin registries — nav.ts, collections.ts, guard.ts, action.ts
+app/                    root layout (minimal), globals.css, favicon
+app/(site)/             public/auth routes — has its own layout.tsx with site chrome
+app/(admin)/lalit/      real admin auth guard + shell; signin/ and 403/ are unguarded
+                        siblings, everything else is inside (dashboard)/ which is
+app/api/admin/          upload (Cloudinary signing) and reorder — both admin-guarded
+app/playground/         (inside app/(site)/) public-read live chat, action-level gate
+components/ui/          61 shadcn components — generated, treat as vendored
+components/motion/      12 motion primitives (Reveal, Stagger, Magnetic, Tilt, ...)
+components/auth/        SignInButton, UserMenu, AuthStatus
+components/admin/       real Phase 4 admin primitives (DataTable, EntityForm, ...)
+hooks/                  use-mobile.ts (768px breakpoint)
+lib/utils.ts            cn() = twMerge(clsx(...))
+lib/data/                cached fetchers per model, plus playground.ts (uncached)
+lib/admin/               nav.ts, collections.ts, guard.ts, action.ts, revalidate.ts
 ```
 
 `@/*` resolves to the repo root, so `@/components/ui/button`, `@/lib/utils`.
