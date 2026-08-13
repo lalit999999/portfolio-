@@ -13,7 +13,11 @@ export default {
   pages: { signIn: "/login" },
   callbacks: {
     authorized({ auth, request }) {
-      const isAdminRoute = request.nextUrl.pathname.startsWith("/admin");
+      const { pathname } = request.nextUrl;
+      const isAdminRoute =
+        pathname.startsWith("/lalit") &&
+        pathname !== "/lalit/signin" &&
+        pathname !== "/lalit/403";
       if (!isAdminRoute) return true;
       return auth?.user?.role === "admin";
     },

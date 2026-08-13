@@ -12,10 +12,10 @@ export async function getAdmin(): Promise<PlaygroundViewer | null> {
 export async function requireAdmin(): Promise<PlaygroundViewer> {
   const user = await getSessionUser();
   if (!user) {
-    redirect("/login");
+    redirect("/lalit/signin");
   }
   if (!isAdmin(user)) {
-    redirect("/");
+    redirect("/lalit/403");
   }
   return user;
 }

@@ -54,7 +54,7 @@ export function UserMenu({ user, className }: UserMenuProps) {
         <DropdownMenuSeparator />
         {user.role === "admin" ? (
           <DropdownMenuItem asChild>
-            <Link href={"/admin" as Route}>
+            <Link href={"/lalit" as Route}>
               <Shield data-icon="inline-start" aria-hidden />
               Admin
             </Link>
