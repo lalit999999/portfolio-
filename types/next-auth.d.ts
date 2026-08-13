@@ -1,4 +1,3 @@
-// STUB — Session A owns this file.
 import type { UserRole } from "@/models/User";
 
 declare module "next-auth" {

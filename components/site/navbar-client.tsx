@@ -35,9 +35,10 @@ export interface NavItem {
 export interface NavbarClientProps {
   name: string;
   navItems: NavItem[];
+  authStatus?: React.ReactNode;
 }
 
-export function NavbarClient({ name, navItems }: NavbarClientProps) {
+export function NavbarClient({ name, navItems, authStatus }: NavbarClientProps) {
   const pathname = usePathname();
   const reduceMotion = useReducedMotion();
   const { scrollY } = useScroll();
@@ -141,6 +142,9 @@ export function NavbarClient({ name, navItems }: NavbarClientProps) {
               <Kbd>⌘K</Kbd>
             </Button>
             <ThemeToggle />
+            {authStatus ? (
+              <div className="hidden sm:block">{authStatus}</div>
+            ) : null}
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild>
                 <Button
@@ -176,6 +180,11 @@ export function NavbarClient({ name, navItems }: NavbarClientProps) {
                     </SheetClose>
                   ))}
                 </nav>
+                {authStatus ? (
+                  <div className="mt-auto border-t border-border/70 px-6 py-4">
+                    {authStatus}
+                  </div>
+                ) : null}
               </SheetContent>
             </Sheet>
           </div>
