@@ -202,16 +202,16 @@ export function Composer({ viewer, onOptimistic, onSettled, className }: Compose
         </p>
       ) : null}
 
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <KbdGroup className="hidden sm:inline-flex">
+      <div className="flex items-center gap-3">
+        <div className="hidden items-center gap-2 sm:flex">
+          <KbdGroup>
             <Kbd>⌘</Kbd>
             <Kbd>Enter</Kbd>
           </KbdGroup>
           <span className="text-xs text-muted-foreground">to send</span>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="ml-auto flex items-center gap-3">
           <span
             className={cn(
               "font-mono text-xs text-muted-foreground",

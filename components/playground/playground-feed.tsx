@@ -213,6 +213,12 @@ export function PlaygroundFeed({
         )}
       </div>
 
+      {pollError ? (
+        <p className="text-center text-xs text-muted-foreground" role="status">
+          Reconnecting…
+        </p>
+      ) : null}
+
       <AnimatePresence>
         {unreadCount > 0 ? (
           <div className="sticky bottom-2 z-10 flex justify-center">

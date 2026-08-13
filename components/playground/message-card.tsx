@@ -97,7 +97,7 @@ export function MessageCard({
         </span>
       </div>
 
-      <p className="text-sm whitespace-pre-wrap break-words text-foreground [overflow-wrap:anywhere]">
+      <p dir="auto" className="text-sm whitespace-pre-wrap break-words text-foreground [overflow-wrap:anywhere]">
         {message.content}
       </p>
 
