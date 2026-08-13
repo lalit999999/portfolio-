@@ -1,6 +1,5 @@
 "use client";
 
-// STUB — Phase 4 Session A owns this file. Do not edit it from another session.
 import { useState } from "react";
 import type { Control, FieldPath, FieldValues } from "react-hook-form";
 import { Controller } from "react-hook-form";
