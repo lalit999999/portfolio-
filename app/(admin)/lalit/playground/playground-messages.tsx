@@ -1,5 +1,6 @@
 "use client";
 
+import type { Route } from "next";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
@@ -42,7 +43,7 @@ export function PlaygroundMessages({
       if (value) params.set(key, value);
       else params.delete(key);
     }
-    router.push(`${pathname}?${params.toString()}`);
+    router.push(`${pathname}?${params.toString()}` as Route);
   }
 
   function runAction(action: () => Promise<{ status: string; message?: string }>) {

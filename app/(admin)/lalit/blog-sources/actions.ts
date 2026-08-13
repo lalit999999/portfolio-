@@ -4,7 +4,7 @@ import { Types } from "mongoose";
 
 import { requireAdmin } from "@/lib/admin/guard";
 import { ok, fail, fromZodError } from "@/lib/admin/action";
-import { revalidateCollection } from "@/lib/admin/revalidate";
+import { updateTag } from "next/cache";
 import {
   blogSourceCreateSchema,
   blogSourceUpdateSchema,
@@ -14,6 +14,12 @@ import dbConnect from "@/lib/db";
 import { BlogPost, BlogSource } from "@/models";
 import type { AdminActionState } from "@/types/admin";
 import type { SerializedBlogSource } from "@/types/models";
+
+// lib/admin/revalidate.ts (Session A, frozen) still calls the deprecated
+// single-argument revalidateTag(tag), which no longer compiles against
+// Next 16's revalidateTag(tag, profile) signature. Calling updateTag directly
+// here matches the old single-arg semantics (immediate expiration,
+// read-your-own-writes) without touching that frozen file.
 
 function serialize<T>(doc: unknown): T {
   return JSON.parse(JSON.stringify(doc)) as T;
@@ -100,9 +106,13 @@ async function fetchHashnodePosts(host: string): Promise<HashnodePostNode[]> {
   return edges.map((edge) => edge.node);
 }
 
-export async function createBlogSource(
-  values: unknown
-): Promise<AdminActionState<SerializedBlogSource>> {
+// Return type is the base AdminActionState, not AdminActionState<X>: fail()/
+// fromZodError() in lib/admin/action.ts (frozen, Session A) aren't generic, so their
+// AdminActionState<unknown> result isn't assignable into a narrower AdminActionState<X>
+// annotation. No caller reads `.data` for these three actions — only
+// testBlogSourceConnection's result is consumed client-side, so that one keeps its
+// generic and casts around the same issue at its two fail() call sites instead.
+export async function createBlogSource(values: unknown): Promise<AdminActionState> {
   await requireAdmin();
 
   const parsed = blogSourceCreateSchema.safeParse(values);
@@ -112,14 +122,15 @@ export async function createBlogSource(
   const order = parsed.data.order ?? (await getNextBlogSourceOrder());
   const doc = await BlogSource.create({ ...parsed.data, order });
 
-  revalidateCollection("blogsources", "blogposts");
+  updateTag("blogsources");
+  updateTag("blogposts");
   return ok(serialize<SerializedBlogSource>(doc.toObject()), "Blog source created.");
 }
 
 export async function updateBlogSource(
   id: string,
   values: unknown
-): Promise<AdminActionState<SerializedBlogSource>> {
+): Promise<AdminActionState> {
   await requireAdmin();
 
   if (!Types.ObjectId.isValid(id)) {
@@ -134,7 +145,8 @@ export async function updateBlogSource(
   const doc = await BlogSource.findByIdAndUpdate(id, parsed.data, { new: true });
   if (!doc) return fail("NOT_FOUND", "Blog source not found.");
 
-  revalidateCollection("blogsources", "blogposts");
+  updateTag("blogsources");
+  updateTag("blogposts");
   return ok(serialize<SerializedBlogSource>(doc.toObject()), "Blog source updated.");
 }
 
@@ -150,7 +162,8 @@ export async function deleteBlogSource(id: string): Promise<AdminActionState> {
   if (!doc) return fail("NOT_FOUND", "Blog source not found.");
   await BlogPost.deleteMany({ source: id });
 
-  revalidateCollection("blogsources", "blogposts");
+  updateTag("blogsources");
+  updateTag("blogposts");
   return ok(undefined, "Blog source deleted.");
 }
 
@@ -165,15 +178,21 @@ export async function testBlogSourceConnection(
 ): Promise<AdminActionState<TestConnectionResult>> {
   await requireAdmin();
 
+  // fail() returns the base AdminActionState (unknown), cast to this function's
+  // AdminActionState<TestConnectionResult> return type — see the comment above
+  // createBlogSource for why the cast is needed instead of a plain return.
   if (platform !== "hashnode") {
     return fail(
       "VALIDATION_ERROR",
       `Test connection isn't implemented for "${platform}" yet — only Hashnode sync exists so far.`
-    );
+    ) as AdminActionState<TestConnectionResult>;
   }
 
   if (!host) {
-    return fail("VALIDATION_ERROR", "Host is required to test a Hashnode source.");
+    return fail(
+      "VALIDATION_ERROR",
+      "Host is required to test a Hashnode source."
+    ) as AdminActionState<TestConnectionResult>;
   }
 
   try {
@@ -186,13 +205,11 @@ export async function testBlogSourceConnection(
     return fail(
       "SERVER_ERROR",
       err instanceof Error ? err.message : "Could not reach Hashnode."
-    );
+    ) as AdminActionState<TestConnectionResult>;
   }
 }
 
-export async function syncBlogSourceNow(
-  id: string
-): Promise<AdminActionState<{ synced: number }>> {
+export async function syncBlogSourceNow(id: string): Promise<AdminActionState> {
   await requireAdmin();
 
   if (!Types.ObjectId.isValid(id)) {
@@ -249,6 +266,7 @@ export async function syncBlogSourceNow(
   source.lastSyncedAt = new Date();
   await source.save();
 
-  revalidateCollection("blogsources", "blogposts");
+  updateTag("blogsources");
+  updateTag("blogposts");
   return ok({ synced: posts.length }, `Synced ${posts.length} post(s).`);
 }

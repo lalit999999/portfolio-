@@ -1,6 +1,7 @@
 "use client";
 
 import type { Route } from "next";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
@@ -40,7 +41,7 @@ export function BlogSourceList({ sources }: { sources: SerializedBlogSource[] })
         </EmptyHeader>
         <EmptyContent>
           <Button asChild>
-            <a href="/lalit/blog-sources/new">Add blog source</a>
+            <Link href="/lalit/blog-sources/new">Add blog source</Link>
           </Button>
         </EmptyContent>
       </Empty>
@@ -133,10 +134,10 @@ export function BlogSourceList({ sources }: { sources: SerializedBlogSource[] })
       searchPlaceholder="Search blog sources…"
       toolbar={
         <Button asChild>
-          <a href="/lalit/blog-sources/new">
+          <Link href="/lalit/blog-sources/new">
             <Plus aria-hidden />
             Add source
-          </a>
+          </Link>
         </Button>
       }
     />

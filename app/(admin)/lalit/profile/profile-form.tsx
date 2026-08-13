@@ -6,12 +6,7 @@ import { toast } from "sonner";
 import { Plus, Trash2, ArrowUp, ArrowDown } from "lucide-react";
 
 import { EntityForm } from "@/components/admin/entity-form";
-import {
-  TextField,
-  TextareaField,
-  TagsField,
-  SwitchField,
-} from "@/components/admin/form-fields";
+import { TextField, TagsField, SwitchField } from "@/components/admin/form-fields";
 import { ImageUploader } from "@/components/admin/image-uploader";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel, FieldDescription } from "@/components/ui/field";

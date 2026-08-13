@@ -1,4 +1,5 @@
 import { Plus } from "lucide-react";
+import Link from "next/link";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import { Button } from "@/components/ui/button";
@@ -15,10 +16,10 @@ export default async function Page() {
         description="Shown in the site footer. Drag to reorder."
         actions={
           <Button asChild>
-            <a href="/lalit/socials/new">
+            <Link href="/lalit/socials/new">
               <Plus aria-hidden />
               Add social link
-            </a>
+            </Link>
           </Button>
         }
       />

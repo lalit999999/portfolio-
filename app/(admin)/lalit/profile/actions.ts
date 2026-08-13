@@ -2,20 +2,29 @@
 
 import { requireAdmin } from "@/lib/admin/guard";
 import { ok, fail, fromZodError } from "@/lib/admin/action";
-import { revalidateCollection } from "@/lib/admin/revalidate";
+import { updateTag } from "next/cache";
 import { profileCreateSchema, profileUpdateSchema } from "@/lib/validators/profile";
 import dbConnect from "@/lib/db";
 import { Profile } from "@/models";
 import type { AdminActionState } from "@/types/admin";
 import type { SerializedProfile } from "@/types/models";
 
+// lib/admin/revalidate.ts (Session A, frozen) still calls the deprecated
+// single-argument revalidateTag(tag), which no longer compiles against
+// Next 16's revalidateTag(tag, profile) signature. Calling updateTag directly
+// here matches the old single-arg semantics (immediate expiration,
+// read-your-own-writes) without touching that frozen file.
+
 function serialize<T>(doc: unknown): T {
   return JSON.parse(JSON.stringify(doc)) as T;
 }
 
-export async function createProfile(
-  values: unknown
-): Promise<AdminActionState<SerializedProfile>> {
+// Return type is the base AdminActionState, not AdminActionState<SerializedProfile>:
+// fail()/fromZodError() in lib/admin/action.ts (frozen, Session A) aren't generic, so
+// their AdminActionState<unknown> result isn't structurally assignable into a more
+// specific AdminActionState<X> return annotation. ok(...) below still produces a
+// properly-typed success payload — nothing here actually reads `.data` client-side.
+export async function createProfile(values: unknown): Promise<AdminActionState> {
   await requireAdmin();
 
   const parsed = profileCreateSchema.safeParse(values);
@@ -29,13 +38,11 @@ export async function createProfile(
   }
 
   const doc = await Profile.create(parsed.data);
-  revalidateCollection("profiles");
+  updateTag("profiles");
   return ok(serialize<SerializedProfile>(doc.toObject()), "Profile created.");
 }
 
-export async function updateProfile(
-  values: unknown
-): Promise<AdminActionState<SerializedProfile>> {
+export async function updateProfile(values: unknown): Promise<AdminActionState> {
   await requireAdmin();
 
   const parsed = profileUpdateSchema.safeParse(values);
@@ -51,13 +58,11 @@ export async function updateProfile(
   existing.set(parsed.data);
   await existing.save();
 
-  revalidateCollection("profiles");
+  updateTag("profiles");
   return ok(serialize<SerializedProfile>(existing.toObject()), "Profile updated.");
 }
 
-export async function setActiveResume(
-  resumeUrl: string
-): Promise<AdminActionState<SerializedProfile>> {
+export async function setActiveResume(resumeUrl: string): Promise<AdminActionState> {
   await requireAdmin();
 
   if (!resumeUrl || typeof resumeUrl !== "string") {
@@ -74,6 +79,6 @@ export async function setActiveResume(
   existing.resumeUrl = resumeUrl;
   await existing.save();
 
-  revalidateCollection("profiles");
+  updateTag("profiles");
   return ok(serialize<SerializedProfile>(existing.toObject()), "Active resume updated.");
 }

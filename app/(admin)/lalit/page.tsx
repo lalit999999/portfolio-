@@ -79,8 +79,8 @@ export default async function Page(props: PageProps<"/lalit">) {
       />
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-        {statCards.map((card) => (
-          <StatCard key={card.key} {...card} />
+        {statCards.map(({ key, ...card }) => (
+          <StatCard key={key} {...card} />
         ))}
       </div>
 

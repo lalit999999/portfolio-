@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -84,7 +85,7 @@ export function SocialForm({ social }: { social?: SerializedSocial }) {
           <div className="flex items-center gap-2">
             <Button type="submit">{social ? "Save changes" : "Create social"}</Button>
             <Button variant="outline" asChild>
-              <a href="/lalit/socials">Cancel</a>
+              <Link href="/lalit/socials">Cancel</Link>
             </Button>
           </div>
         </div>

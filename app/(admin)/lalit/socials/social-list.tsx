@@ -1,6 +1,7 @@
 "use client";
 
 import type { Route } from "next";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -38,7 +39,7 @@ export function SocialList({ socials }: { socials: SerializedSocial[] }) {
         </EmptyHeader>
         <EmptyContent>
           <Button asChild>
-            <a href="/lalit/socials/new">Add social link</a>
+            <Link href="/lalit/socials/new">Add social link</Link>
           </Button>
         </EmptyContent>
       </Empty>

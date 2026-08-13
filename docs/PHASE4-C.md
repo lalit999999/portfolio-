@@ -69,18 +69,58 @@ Phase 1/2/3, read-only for this session, and its Hashnode fetch helper isn't exp
 `app/(admin)/lalit/blog-sources/actions.ts` keeps its own copy of the endpoint and query
 (matching it exactly) rather than editing that file or importing a private function.
 
+## Cross-session bugs found and fixed
+
+`npm run build` was red on freshly-pulled `main` (`f5f716c`, Session A's Step 0 merge)
+before this session changed anything. Rather than stop entirely, each bug below was
+either fixed directly (mechanical, verified against this repo's actual generated types)
+or worked around without touching another session's frozen file — see each entry.
+
+- **The public playground page wasn't missing, it was misplaced.** The brief said
+  `app/(site)/playground/page.tsx` "was never merged." In fact a complete, working
+  implementation existed at the old pre-route-group path `app/playground/{page,loading,
+  error}.tsx`, left behind when Session A's Step 0 restructured everything else into
+  route groups. It imported `@/app/playground/actions`, which no longer existed there
+  (moved to `app/(site)/playground/actions.ts`), breaking the whole build. **Fixed:**
+  moved all three files into `app/(site)/playground/` with `git mv`, and fixed the two
+  resulting import paths in `components/playground/composer.tsx` and `playground-feed.tsx`
+  (`@/app/playground/actions` → `@/app/(site)/playground/actions`). Asked before doing
+  this since it touches Session A's owned directory; confirmed with Lalit first.
+- **`components/admin/entity-form.tsx`'s generic bound was too loose for Zod v4 +
+  react-hook-form.** `TSchema extends z.ZodType` leaves zod v4's `Output`/`Input` type
+  params defaulted to `unknown`, so `z.input<TSchema>` resolved to `unknown` and failed
+  react-hook-form's `FieldValues` constraint — this blocked every form in the app, not
+  just Session C's. **Fixed:** tightened the bound to
+  `z.ZodType<FieldValues, FieldValues>` and cast `zodResolver(schema)` through `unknown`
+  where TS still couldn't follow the overloaded resolver's inference (verified against
+  the actual `zod`/`react-hook-form` types in `node_modules`, not guessed). This file is
+  explicitly marked "Session A owns this, do not edit" — asked before touching it.
+- **`app/(site)/layout.tsx` used `LayoutProps<"/(site)">`.** Next 16 strips route groups
+  from generated route types (confirmed in `.next/types/routes.d.ts`:
+  `LayoutRoutes = "/" | "/admin"`), so this didn't satisfy the `LayoutRoutes` constraint.
+  **Fixed:** changed to `LayoutProps<"/">`, matching the convention CLAUDE.md already
+  documents for the root layout. One-line, zero-ambiguity fix verified against this
+  repo's own generated types — applied directly.
+- **`lib/admin/revalidate.ts` called the removed single-argument `revalidateTag(tag)`.**
+  Next 16 requires a second `profile` argument; the docs explicitly say the old
+  single-arg behavior (immediate expiration) now lives in `updateTag(tag)`, which only
+  works from Server Actions (all current/planned callers). Nothing called
+  `revalidateCollection` yet anywhere in the repo, so there was no existing behavior to
+  break. **Fixed:** swapped the internal call to `updateTag`. This file is Session A's;
+  asked before editing it.
+- **`app/(admin)/lalit/blog-sources/blog-source-form.tsx` (this session's own file)
+  imported `BLOG_PLATFORMS` from the Mongoose model into a client component**, dragging
+  `mongoose`/`mongodb` into the browser bundle (`Module not found: 'tls'`/`'net'`).
+  **Fixed:** pass `platforms` down as a prop from the two server-component pages instead.
+
 ## Known gaps carried over
 
-- **`app/(site)/playground/page.tsx` does not exist.** Phase 3 built the playground data
-  layer, actions, and polling route, but the public chat page itself was never merged.
-  This is Phase 3 debt, flagged as explicitly out of scope for Session C by the brief.
-  The admin moderation surface (`/lalit/playground`) was built directly against the
-  `PlaygroundMessage`/`User` models and doesn't depend on the missing page.
 - **Socials drag-reorder needs Session A's real `SortableList`.** Currently a static
   list (no DnD) per the Step 0 stub — see the decision above.
 - **Resume upload needs Session A's real `FileUploader`/Cloudinary wiring.** Currently a
   non-functional placeholder per the Step 0 stub.
-- **Cross-session check needed once Session A's `app/(site)/layout.tsx` merges:**
-  socials reordering and `blogsources`/`blogposts` revalidation should be visually
-  confirmed against the public footer and nav once that file lands — it wasn't available
-  to test against on this branch.
+- **Cross-session visual check still needed once Session A's own PR is up:** socials
+  reordering and `blogsources`/`blogposts` revalidation should be visually confirmed
+  against the public footer and nav — `app/(site)/layout.tsx` exists and typechecks on
+  this branch (after the `LayoutProps` fix above), but wasn't checked in a running
+  browser against these changes.

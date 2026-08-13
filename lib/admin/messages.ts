@@ -10,9 +10,19 @@ function serialize<T>(doc: unknown): T {
 
 export type InboxFilter = "unread" | "all" | "archived";
 
+// SerializedMessage (types/models.ts, frozen) omits ipHash/userAgent even though
+// IMessage has them — same situation as PlaygroundFeedItem deliberately omitting
+// isHidden. The admin inbox detail view needs them for the technical-details
+// disclosure, so this defines its own richer type rather than editing the
+// frozen one.
+export interface AdminSerializedMessage extends SerializedMessage {
+  ipHash?: string;
+  userAgent?: string;
+}
+
 export async function getAdminMessages(
   filter: InboxFilter = "all"
-): Promise<SerializedMessage[]> {
+): Promise<AdminSerializedMessage[]> {
   await dbConnect();
 
   const query: Record<string, unknown> =
@@ -23,15 +33,15 @@ export async function getAdminMessages(
         : { isArchived: false };
 
   const docs = await Message.find(query).sort({ createdAt: -1 }).lean();
-  return serialize<SerializedMessage[]>(docs);
+  return serialize<AdminSerializedMessage[]>(docs);
 }
 
-export async function getAdminMessage(id: string): Promise<SerializedMessage | null> {
+export async function getAdminMessage(id: string): Promise<AdminSerializedMessage | null> {
   if (!Types.ObjectId.isValid(id)) return null;
   await dbConnect();
   const doc = await Message.findById(id).lean();
   if (!doc) return null;
-  return serialize<SerializedMessage>(doc);
+  return serialize<AdminSerializedMessage>(doc);
 }
 
 export async function getUnreadMessageCount(): Promise<number> {

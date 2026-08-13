@@ -36,8 +36,8 @@ export function PlaygroundMembers({
       if (state.status === "success") {
         toast.success(state.message ?? "Done.");
         router.refresh();
-      } else {
-        toast.error(state.message ?? "Something went wrong.");
+      } else if (state.status === "error") {
+        toast.error(state.message);
       }
     });
   }

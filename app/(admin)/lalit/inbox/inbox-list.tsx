@@ -1,5 +1,7 @@
 "use client";
 
+import type { Route } from "next";
+import Link from "next/link";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -40,7 +42,7 @@ export function InboxList({
   function setFilter(next: InboxFilter) {
     const params = new URLSearchParams(searchParams);
     params.set("filter", next);
-    router.push(`${pathname}?${params.toString()}`);
+    router.push(`${pathname}?${params.toString()}` as Route);
     setSelected(new Set());
   }
 
@@ -158,8 +160,8 @@ export function InboxList({
                 onCheckedChange={() => toggle(message._id)}
                 aria-label={`Select message from ${message.name}`}
               />
-              <a
-                href={`/lalit/inbox/${message._id}`}
+              <Link
+                href={`/lalit/inbox/${message._id}` as Route}
                 className="flex min-w-0 flex-1 items-center justify-between gap-3"
               >
                 <div className="min-w-0">
@@ -180,7 +182,7 @@ export function InboxList({
                 <span className="shrink-0 text-xs text-muted-foreground">
                   {formatDistanceToNow(new Date(message.createdAt), { addSuffix: true })}
                 </span>
-              </a>
+              </Link>
             </li>
           ))}
         </ul>

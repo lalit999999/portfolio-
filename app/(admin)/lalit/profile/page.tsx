@@ -36,7 +36,7 @@ export default async function Page() {
               </EmptyMedia>
               <EmptyTitle>No profile yet</EmptyTitle>
               <EmptyDescription>
-                Create the profile document to start editing your site's hero and bio.
+                Create the profile document to start editing your site&apos;s hero and bio.
               </EmptyDescription>
             </EmptyHeader>
           </Empty>

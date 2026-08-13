@@ -1,13 +1,9 @@
+import type { Route } from "next";
+import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import { Inbox, MessagesSquare } from "lucide-react";
 
-import {
-  Empty,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-  EmptyDescription,
-} from "@/components/ui/empty";
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 import type { AdminStats } from "@/lib/admin/stats";
 
 export function RecentActivity({
@@ -34,7 +30,10 @@ export function RecentActivity({
           <ul className="mt-3 flex flex-col divide-y divide-border">
             {messages.map((m) => (
               <li key={m._id} className="py-2">
-                <a href={`/lalit/inbox/${m._id}`} className="flex items-center justify-between gap-3">
+                <Link
+                  href={`/lalit/inbox/${m._id}` as Route}
+                  className="flex items-center justify-between gap-3"
+                >
                   <div className="min-w-0">
                     <p className="truncate text-sm text-card-foreground">{m.name}</p>
                     <p className="truncate text-xs text-muted-foreground">
@@ -44,7 +43,7 @@ export function RecentActivity({
                   <span className="shrink-0 text-xs text-muted-foreground">
                     {formatDistanceToNow(new Date(m.createdAt), { addSuffix: true })}
                   </span>
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
@@ -66,7 +65,7 @@ export function RecentActivity({
           <ul className="mt-3 flex flex-col divide-y divide-border">
             {playgroundMessages.map((m) => (
               <li key={m._id} className="py-2">
-                <a href="/lalit/playground" className="flex items-center justify-between gap-3">
+                <Link href="/lalit/playground" className="flex items-center justify-between gap-3">
                   <div className="min-w-0">
                     <p className="truncate text-sm text-card-foreground">@{m.author}</p>
                     <p className="truncate text-xs text-muted-foreground">{m.content}</p>
@@ -74,7 +73,7 @@ export function RecentActivity({
                   <span className="shrink-0 text-xs text-muted-foreground">
                     {formatDistanceToNow(new Date(m.createdAt), { addSuffix: true })}
                   </span>
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

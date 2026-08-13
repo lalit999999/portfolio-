@@ -14,10 +14,10 @@ import {
   CollapsibleContent,
 } from "@/components/ui/collapsible";
 import { ConfirmDialog } from "@/components/admin/confirm-dialog";
-import type { SerializedMessage } from "@/types/models";
+import type { AdminSerializedMessage } from "@/lib/admin/messages";
 import { archiveMessage, deleteMessage, markMessageRead } from "./actions";
 
-export function MessageDetail({ message }: { message: SerializedMessage }) {
+export function MessageDetail({ message }: { message: AdminSerializedMessage }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [isRead, setIsRead] = useState(message.isRead);
