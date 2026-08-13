@@ -7,14 +7,15 @@ shadcn/ui component library already vendored into `components/ui/`.
 
 ## Current state (read this first)
 
-**The portfolio itself does not exist yet.** `app/page.tsx` is still the unmodified
-`create-next-app` landing page, and `app/layout.tsx` still exports the default
-`"Create Next App"` metadata. The three commits so far are the CNA scaffold plus two
-batches of shadcn components.
+Phase 1 (data layer: models, validators, seed scripts) and Phase 2 (public site +
+animation system) are both merged. The site is real: `/`, `/projects`,
+`/projects/[slug]`, `/skills`, `/certifications`, `/blogs`, `/contact`, and the
+dev-only `/motion-lab` harness all render actual content, and `app/layout.tsx` sets
+real metadata (title derived from the profile data, not the CNA default).
 
-So: the UI kit is in place, the site is not. When asked to "add" a section, assume it
-is being built from scratch rather than edited. Update `metadata` in `app/layout.tsx`
-early — shipping with the CNA title is an easy thing to forget.
+Routes read from MongoDB via `lib/db.ts` / `models/**`. Without a live `MONGODB_URI`
+(`.env.local`, gitignored) some routes will error — that's a missing-env-var issue,
+not broken code.
 
 ## Commands
 
@@ -46,7 +47,7 @@ after a dev/build run, so a cold clone will show phantom TS errors until then.
 All theming lives in `app/globals.css`:
 - `@theme inline` maps Tailwind tokens to CSS custom properties
 - `:root` / `.dark` define those properties as `oklch()` values
-- radius is a scale computed from a single `--radius: 0.875rem` (`rounded-4xl` etc. are
+- radius is a scale computed from a single `--radius: 0.75rem` (`rounded-4xl` etc. are
   real, project-defined utilities — not typos)
 
 Style with semantic tokens (`bg-background`, `text-muted-foreground`, `border-border`).
@@ -58,6 +59,21 @@ placeholder code, not a pattern to copy.
   `import { Slot } from "radix-ui"`, **not** `@radix-ui/react-slot`.
 - `@base-ui/react` — `combobox.tsx` only
 - `@shadcn/react` — `questionnaire.tsx`, `message-scroller.tsx`
+
+## Theming
+
+Colors come only from the semantic tokens defined in `app/globals.css` — never raw
+Tailwind palette classes (`bg-blue-500`, `text-red-600`, ...) or raw hex/`rgba()`/`hsla()`
+in components. The one exception is brand icons (e.g. `profile-photo.tsx`'s
+`style={{ color: '#' + icon.hex }}`) — those are supposed to be literal brand colors.
+
+**Dark mode is the reference design.** `.dark` in `app/globals.css` is designed first;
+`:root` (light) is a derived, inverted-lightness version of the same hue family, not an
+independently chosen palette.
+
+Adding a token means touching three places together, or a shadcn component will
+silently break: `:root`, `.dark`, and the `@theme inline` map (`--color-x: var(--x)`) at
+the top of `app/globals.css`.
 
 ## Layout & conventions
 
