@@ -30,7 +30,7 @@ export function Footer({ profile, socials, showBlogs }: FooterProps) {
     <footer className="relative mt-24 border-t border-border/70">
       <div
         aria-hidden
-        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"
+        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/35 to-transparent"
       />
 
       <div className="mx-auto max-w-6xl px-4 py-16">

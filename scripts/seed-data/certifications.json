@@ -9,7 +9,7 @@
       "Basic ML",
       "AI"
     ],
-    "color": "emerald",
+    "color": "success",
     "order": 0,
     "isVisible": true
   },
@@ -26,7 +26,7 @@
       "AWS Cloud Computing",
       "AWS Cloud Foundations"
     ],
-    "color": "blue",
+    "color": "info",
     "order": 1,
     "isVisible": true
   },
@@ -43,7 +43,7 @@
       "Data validation and structuring with Pydantic",
       "Containerized deployment with Docker"
     ],
-    "color": "purple",
+    "color": "primary",
     "order": 2,
     "isVisible": true
   }

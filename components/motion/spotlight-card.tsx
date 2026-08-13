@@ -41,7 +41,7 @@ function ensureBeamStylesheet() {
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: conic-gradient(from var(--spotlight-angle), transparent 0deg, var(--color-primary) 70deg, transparent 140deg);
+  background: conic-gradient(from var(--spotlight-angle), transparent 0deg, oklch(from var(--color-primary) l c h / 0.85) 70deg, transparent 140deg);
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -119,7 +119,7 @@ export function SpotlightCard({
           style={{
             opacity: "var(--spot-opacity, 0)",
             background:
-              "radial-gradient(420px circle at var(--spot-x, 50%) var(--spot-y, 50%), oklch(from var(--color-primary) l c h / 0.18), transparent 72%)",
+              "radial-gradient(420px circle at var(--spot-x, 50%) var(--spot-y, 50%), oklch(from var(--color-primary) l c h / 0.14), transparent 72%)",
           }}
         />
       )}

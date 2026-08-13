@@ -1,12 +1,12 @@
 import { Schema, model, models, type Model } from "mongoose";
 
 export const CERT_COLORS = [
-  "emerald",
-  "blue",
-  "purple",
-  "amber",
-  "rose",
-  "cyan",
+  "primary",
+  "accent",
+  "success",
+  "warning",
+  "info",
+  "neutral",
 ] as const;
 
 export type CertColor = (typeof CERT_COLORS)[number];
@@ -37,7 +37,7 @@ const CertificationSchema = new Schema<ICertification>(
     credentialUrl: { type: String },
     imageUrl: { type: String },
     skills: { type: [String], default: [] },
-    color: { type: String, enum: CERT_COLORS, default: "blue" },
+    color: { type: String, enum: CERT_COLORS, default: "info" },
     order: { type: Number, required: true },
     isVisible: { type: Boolean, default: true },
   },

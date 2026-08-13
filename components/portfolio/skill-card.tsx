@@ -52,20 +52,6 @@ export function SkillCard({
         <span className="text-sm font-medium text-foreground">
           {skill.name}
         </span>
-
-        <div
-          className="h-1.5 w-full overflow-hidden rounded-full bg-muted"
-          role="progressbar"
-          aria-label={`${skill.name} proficiency`}
-          aria-valuenow={skill.proficiency}
-          aria-valuemin={0}
-          aria-valuemax={100}
-        >
-          <div
-            className="h-full rounded-full bg-primary transition-[width] duration-700 ease-out"
-            style={{ width: `${skill.proficiency}%` }}
-          />
-        </div>
       </SpotlightCard>
     </Reveal>
   );

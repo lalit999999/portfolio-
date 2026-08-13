@@ -66,10 +66,14 @@ export function NavbarClient({ name, navItems }: NavbarClientProps) {
     >
       <div
         className={cn(
-          "relative mx-auto flex max-w-6xl flex-col rounded-xl border border-border/70 bg-background/85 text-foreground shadow-[0_10px_40px_-20px_rgba(15,23,42,0.3)] backdrop-blur-md transition-colors duration-300 supports-backdrop-filter:bg-background/75",
+          "relative mx-auto flex max-w-6xl flex-col rounded-xl border border-border/70 bg-background/85 text-foreground backdrop-blur-md transition-colors duration-300 supports-backdrop-filter:bg-background/75",
           scrolled &&
             "bg-background/95 backdrop-blur-xl supports-backdrop-filter:bg-background/90"
         )}
+        style={{
+          boxShadow:
+            "0 10px 40px -20px color-mix(in oklch, var(--color-foreground), transparent 85%)",
+        }}
       >
         <div
           className={cn(
