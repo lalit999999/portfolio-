@@ -30,7 +30,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-import { checkSlugAvailable } from "@/app/(admin)/lalit/projects/actions";
+import { checkSlugAvailable } from "@/app/(admin)/lalit/(dashboard)/projects/actions";
 
 type ProjectFormValues = z.input<typeof projectCreateSchema>;
 type ProjectFormOutput = z.output<typeof projectCreateSchema>;

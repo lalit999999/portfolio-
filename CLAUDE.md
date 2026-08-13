@@ -15,9 +15,11 @@ content: `/`, `/projects`, `/projects/[slug]`, `/skills`, `/certifications`, `/b
 default).
 
 **Branch `phase-4-a-foundation` (not yet merged) adds real `/lalit` auth, a real admin
-shell, and real shared admin primitives** — see "Phase 4 (in progress)" below. On
-`main`, `/admin` is still the middleware- and layout-guarded Phase 3 placeholder; on
-this branch `/admin` no longer exists at all, superseded by `/lalit`.
+shell, real shared admin primitives, and — merged in from session B's
+`phase-4-b-content` branch — real CRUD UI for four collections** — see "Phase 4 (in
+progress)" below. On `main`, `/admin` is still the middleware- and layout-guarded
+Phase 3 placeholder; on this branch `/admin` no longer exists at all, superseded by
+`/lalit`.
 
 Routes read from MongoDB via `lib/db.ts` / `models/**` (12 Mongoose models). Without a
 live `MONGODB_URI` (`.env.local`, gitignored) some routes will error — that's a
@@ -137,8 +139,10 @@ those are v4 names and NextAuth v5 silently ignores them.
 ## Phase 4 (in progress)
 
 `phase-4-a-foundation` branch. Auth, the admin shell, and the shared admin primitives
-are real; per-collection admin CRUD pages are not (that's later work — see below).
-Details and decisions in `docs/PHASE4-A.md`.
+are real. Session B's `phase-4-b-content` branch is merged in on top, so **certifications,
+education, projects, and skills also have real per-collection CRUD UI now** — see below
+for what's still a placeholder. Details and decisions in `docs/PHASE4-A.md` (this
+session) and `docs/PHASE4-B.md` (session B).
 
 - **New deps** (the only Phase 4 `npm install`): `react-hook-form`,
   `@hookform/resolvers` (v5, required for Zod 4 — v3 does not support it),
@@ -178,10 +182,27 @@ Details and decisions in `docs/PHASE4-A.md`.
   `sortable-list.tsx` (real `react-dnd` drag via `app/api/admin/reorder`, with
   keyboard up/down buttons on every row since the HTML5 DnD backend has no touch
   support), `row-actions.tsx`, `confirm-dialog.tsx`, `admin-page-header.tsx`,
-  `stat-card.tsx`. The 23 non-dashboard pages under `(dashboard)/**` that *use* these
-  primitives are still "Coming in Phase 4" placeholders — building real per-collection
-  CRUD UI is deliberately out of this session's scope (foundation only), left for
-  later work.
+  `stat-card.tsx`.
+- **Certifications, education, projects, and skills have real CRUD UI**, each with its
+  own `actions.ts` (Server Actions), Zod `schema.ts`, and a table/tabs component built
+  on `data-table.tsx` (certifications/education/projects also have a dedicated
+  `[id]`/`new` route pair and a form component). **Certifications alone also has a
+  `client-schema.ts`**: `lib/validators/certification.ts` imports `CERT_COLORS` from
+  `models/Certification.ts`, and that model file imports `mongoose` at module scope, so
+  any client form importing the real validator would drag `mongoose` into the browser
+  bundle and break the build. `client-schema.ts` hand-mirrors the schema with
+  `CERT_COLORS` duplicated as a local literal for the client-side `zodResolver` only;
+  the real, model-backed validator still runs server-side in `actions.ts`, which is the
+  actual validation boundary regardless. `project.ts`/`skill.ts`/`skillCategory.ts`/
+  `education.ts` don't import from `models/`, so they don't need this split. **Skills is
+  the odd one out** for routing:
+  it's a single page (`skills/page.tsx` → `skills-tabs.tsx`) with `category-dialog.tsx`
+  / `skill-dialog.tsx` handling create/edit, not `[id]`/`new` routes — don't add those
+  for skills, the UI doesn't link to them. Supporting data-layer reads live in
+  `lib/admin/{certifications,education,projects,skills}.ts`, with shared Mongoose→JSON
+  shaping in `lib/admin/serialize.ts`. blog-sources, inbox, playground, profile, and
+  socials are still "Coming in Phase 4" placeholders — that CRUD UI is later work, out
+  of scope for both sessions A and B.
 - **New env vars**: `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`,
   `CLOUDINARY_API_SECRET`, `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` (see `.env.example`) —
   without these `/api/admin/upload` 500s.
