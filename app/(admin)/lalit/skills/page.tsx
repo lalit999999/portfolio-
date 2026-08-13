@@ -1,30 +1,25 @@
-// STUB — Phase 4 Session A owns this file. Do not edit it from another session.
-import { Hammer } from "lucide-react";
-
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
-import {
-  Empty,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-  EmptyDescription,
-} from "@/components/ui/empty";
+import { listSkillCategories, listSkills } from "@/lib/admin/skills";
+import { requireAdmin } from "@/lib/admin/guard";
+
+import { SkillsTabs } from "./skills-tabs";
 
 export default async function Page(props: PageProps<"/lalit/skills">) {
   await props.params;
+  await requireAdmin();
+
+  const [categories, skills] = await Promise.all([
+    listSkillCategories(),
+    listSkills(),
+  ]);
 
   return (
     <div className="flex flex-col gap-6">
-      <AdminPageHeader title="Skills" />
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <Hammer aria-hidden />
-          </EmptyMedia>
-          <EmptyTitle>Coming in Phase 4</EmptyTitle>
-          <EmptyDescription>This section is not built yet.</EmptyDescription>
-        </EmptyHeader>
-      </Empty>
+      <AdminPageHeader
+        title="Skills"
+        description="Categories group skills on the public skills page."
+      />
+      <SkillsTabs initialCategories={categories} initialSkills={skills} />
     </div>
   );
 }
