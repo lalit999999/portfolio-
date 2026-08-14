@@ -14,16 +14,12 @@ content: `/`, `/projects`, `/projects/[slug]`, `/skills`, `/certifications`, `/b
 `app/layout.tsx` sets real metadata (title derived from the profile data, not the CNA
 default).
 
-**Phase 4 sessions A and B are merged into `main`** (`phase-4-a-foundation`, with
-session B's `phase-4-b-content` merged in on top): real `/lalit` auth, a real admin
-shell, real shared admin primitives, and real CRUD UI for four collections — see
-"Phase 4 (in progress)" below. `/admin` no longer exists; it's superseded by `/lalit`.
-
-A third branch, `phase-4-c-ops` (session C), adds blog-sources/inbox/playground-admin/
-profile/socials CRUD plus a full admin dashboard, but **is not merged into `main`** —
-it's an open PR blocked on real conflicts (file-ownership overlaps and a route-group
-restructure). Don't assume any of session C's routes or files exist on `main` until
-that PR lands.
+**Phase 4 is fully merged into `main`** — all three sessions: A (`phase-4-a-foundation`,
+auth + admin shell + shared primitives), B (`phase-4-b-content`, merged into A:
+certifications/education/projects/skills CRUD), and C (`phase-4-c-ops`, merged via PR
+#10: profile/socials/blog-sources/inbox/playground-admin CRUD plus the stats dashboard
+at `/lalit`). See "Phase 4" below for what each session built. `/admin` no longer
+exists; it's superseded by `/lalit`.
 
 Routes read from MongoDB via `lib/db.ts` / `models/**` (12 Mongoose models). Without a
 live `MONGODB_URI` (`.env.local`, gitignored) some routes will error — that's a
@@ -140,14 +136,16 @@ Required env vars beyond the Phase 1/2 set: `AUTH_SECRET`, `AUTH_GITHUB_ID`,
 username), `AUTH_TRUST_HOST="true"`. Do not add `NEXTAUTH_URL` / `NEXTAUTH_SECRET` —
 those are v4 names and NextAuth v5 silently ignores them.
 
-## Phase 4 (in progress)
+## Phase 4 (complete)
 
-Sessions A (`phase-4-a-foundation`) and B (`phase-4-b-content`, merged into A) are both
-on `main`. Auth, the admin shell, the shared admin primitives, and **certifications,
-education, projects, and skills CRUD UI** are all real and merged — see below for
-what's still a placeholder. Details and decisions in `docs/PHASE4-A.md` (session A) and
-`docs/PHASE4-B.md` (session B). Session C (`phase-4-c-ops`) is not merged — see
-"Current state" above.
+All three sessions are on `main`: A (`phase-4-a-foundation`) — auth, the admin shell,
+the shared admin primitives; B (`phase-4-b-content`, merged into A) — certifications,
+education, projects, and skills CRUD UI; C (`phase-4-c-ops`, merged via PR #10) —
+profile, socials, blog-sources, inbox, and playground-admin CRUD, plus the `/lalit`
+stats dashboard. Details and decisions in `docs/PHASE4-A.md` (session A),
+`docs/PHASE4-B.md` (session B), and `docs/PHASE4-C.md` (session C — also has a
+cross-session bug log worth reading before touching shared files like
+`entity-form.tsx` or `lib/admin/revalidate.ts`).
 
 - **New deps** (the only Phase 4 `npm install`): `react-hook-form`,
   `@hookform/resolvers` (v5, required for Zod 4 — v3 does not support it),
@@ -205,10 +203,18 @@ what's still a placeholder. Details and decisions in `docs/PHASE4-A.md` (session
   / `skill-dialog.tsx` handling create/edit, not `[id]`/`new` routes — don't add those
   for skills, the UI doesn't link to them. Supporting data-layer reads live in
   `lib/admin/{certifications,education,projects,skills}.ts`, with shared Mongoose→JSON
-  shaping in `lib/admin/serialize.ts`. blog-sources, inbox, playground, profile, and
-  socials are still "Coming in Phase 4" placeholders on `main` — that CRUD UI exists on
-  the unmerged `phase-4-c-ops` branch (session C), not because it's unscheduled but
-  because that branch hasn't landed yet (see "Current state" above).
+  shaping in `lib/admin/serialize.ts`.
+- **Session C's collections are also real**: profile (`/lalit/profile`) is a singleton
+  editor for the one `Profile` document; socials (`/lalit/socials`) uses `SortableList`
+  directly as its whole list page (not `DataTable`) since drag-reorder is the primary
+  interaction and the list is always small; blog-sources (`/lalit/blog-sources`) adds
+  "Test connection"/"Sync now" actions but only implements the `hashnode` platform —
+  `devto`/`medium` return a clear "not implemented yet" error; inbox (`/lalit/inbox`) is
+  contact-message triage only, no public rendering so no cache tag; playground
+  (`/lalit/playground`) is moderation (pin/hide/delete messages, ban/unban members) for
+  the Phase 3 public playground. The `/lalit` dashboard itself is Session C's stats
+  view: 10 stat cards, 4 charts, recent activity, top projects by `viewCount` (always
+  zero — nothing in the codebase increments it yet, out of scope per the Phase 4 brief).
 - **New env vars**: `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`,
   `CLOUDINARY_API_SECRET`, `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` (see `.env.example`) —
   without these `/api/admin/upload` 500s.
