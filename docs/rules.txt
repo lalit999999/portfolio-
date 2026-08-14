@@ -1,0 +1,14 @@
+Rules that apply to all three sessions
+
+Paste these at the top of each prompt, or keep them in CLAUDE.md.
+
+Audit before acting. Read the actual file before editing it. The audit doc is from 15 Aug 2026 — if the repo disagrees with it, the repo wins; say so.
+Conventional commit prefixes (fix:, feat:, refactor:, docs:, chore:).
+Explicit git add <paths> only. Never git add -A / git add ..
+No Co-Authored-By trailers, no generated-content footers.
+Never run npx shadcn@latest init (with or without flags). It rewrites app/globals.css and destroys the warm-orange theme. Only shadcn add is safe.
+Verification gate — all four must pass before any commit that closes a step:
+bash
+  npx next typegen && npx tsc --noEmit && npx eslint && npm run build
+One hard stop per session. If you hit a genuinely unresolvable blocker, stop and report. Otherwise execute straight through.
+Only one next dev/next build per checkout at a time — Turbopack's .next/ lockfile surfaces collisions as a spurious ENOSPC.

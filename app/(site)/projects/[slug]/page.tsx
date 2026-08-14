@@ -22,11 +22,14 @@ import { CountUp, Reveal } from "@/components/motion";
 const githubIcon = getBrandIcon("github");
 
 export const revalidate = 3600;
-export const dynamicParams = false;
 
 export async function generateStaticParams() {
-  const slugs = await getProjectSlugs();
-  return slugs.map((slug) => ({ slug }));
+  try {
+    const slugs = await getProjectSlugs();
+    return slugs.map((slug) => ({ slug }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata(
