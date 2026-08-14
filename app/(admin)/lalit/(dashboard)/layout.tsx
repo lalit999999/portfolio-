@@ -2,6 +2,7 @@ import type * as React from "react";
 
 import { requireAdmin } from "@/lib/admin/guard";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { AdminSidebar } from "@/components/admin/admin-sidebar";
 import { AdminTopbar } from "@/components/admin/admin-topbar";
 
@@ -15,12 +16,14 @@ export default async function AdminDashboardLayout({
   const user = await requireAdmin();
 
   return (
-    <SidebarProvider>
-      <AdminSidebar />
-      <SidebarInset>
-        <AdminTopbar user={user} />
-        <div className="flex-1 p-4 sm:p-6">{children}</div>
-      </SidebarInset>
-    </SidebarProvider>
+    <TooltipProvider>
+      <SidebarProvider>
+        <AdminSidebar />
+        <SidebarInset>
+          <AdminTopbar user={user} />
+          <div className="flex-1 p-4 sm:p-6">{children}</div>
+        </SidebarInset>
+      </SidebarProvider>
+    </TooltipProvider>
   );
 }
