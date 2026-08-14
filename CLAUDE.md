@@ -21,11 +21,21 @@ certifications/education/projects/skills CRUD), and C (`phase-4-c-ops`, merged v
 at `/lalit`). See "Phase 4" below for what each session built. `/admin` no longer
 exists; it's superseded by `/lalit`.
 
+**Phase 5 (framework migrations, SEO, rate limiting) is code-complete but the site is
+not yet deployed** — see `docs/PHASE5.md` for the full writeup, including two bugs
+found and fixed while live-testing the proxy migration (a `session.user.role` gap that
+would have 403'd real admins, and a missing `TooltipProvider` crashing `/lalit`
+entirely), the reasoning for keeping `unstable_cache` and the playground's DB-backed
+rate limiter rather than migrating them, and the production env var / deployment
+checklist. Deployment itself needs Vercel/Atlas/GitHub OAuth app access this repo's
+sessions don't have.
+
 Routes read from MongoDB via `lib/db.ts` / `models/**` (12 Mongoose models). Without a
 live `MONGODB_URI` (`.env.local`, gitignored) some routes will error — that's a
 missing-env-var issue, not broken code. `lib/data/*` wraps most fetchers in
-`unstable_cache` (1h revalidate); the playground fetchers in `lib/data/playground.ts`
-are deliberately bare `async` functions — see the Auth section below for why.
+`unstable_cache` (1h revalidate) — kept deliberately past its soft-deprecation in Next
+16, see `docs/PHASE5.md`; the playground fetchers in `lib/data/playground.ts` are
+deliberately bare `async` functions — see the Auth section below for why.
 
 ## Commands
 
