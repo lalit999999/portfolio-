@@ -22,7 +22,7 @@ export interface IProject {
 const ProjectSchema = new Schema<IProject>(
   {
     title: { type: String, required: true },
-    slug: { type: String, required: true, unique: true, index: true },
+    slug: { type: String, required: true, unique: true },
     summary: { type: String, required: true },
     description: { type: String, required: true },
     tech: { type: [String], default: [] },

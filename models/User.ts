@@ -22,7 +22,7 @@ export interface IUser {
 
 const UserSchema = new Schema<IUser>(
   {
-    githubId: { type: String, required: true, unique: true, index: true },
+    githubId: { type: String, required: true, unique: true },
     username: { type: String, required: true },
     name: { type: String },
     avatarUrl: { type: String },
