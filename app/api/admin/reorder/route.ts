@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
-import { requireAdmin } from "@/lib/admin/guard";
+import { requireAdminApi } from "@/lib/admin/guard";
 import { COLLECTION_REGISTRY } from "@/lib/admin/collections";
 import { revalidateCollection } from "@/lib/admin/revalidate";
 import { ADMIN_COLLECTIONS } from "@/types/admin";
@@ -13,7 +13,8 @@ const bodySchema = z.object({
 });
 
 export async function POST(request: Request) {
-  await requireAdmin();
+  const admin = await requireAdminApi();
+  if (admin instanceof NextResponse) return admin;
 
   const parsed = bodySchema.safeParse(await request.json());
   if (!parsed.success) {

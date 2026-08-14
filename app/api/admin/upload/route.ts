@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { z } from "zod";
 
-import { requireAdmin } from "@/lib/admin/guard";
+import { requireAdminApi } from "@/lib/admin/guard";
 import type { UploadSignature } from "@/types/admin";
 
 cloudinary.config({
@@ -17,7 +17,8 @@ const bodySchema = z.object({
 });
 
 export async function POST(request: Request) {
-  await requireAdmin();
+  const admin = await requireAdminApi();
+  if (admin instanceof NextResponse) return admin;
 
   const parsed = bodySchema.safeParse(await request.json());
   if (!parsed.success) {

@@ -19,7 +19,12 @@ async function requestSignature(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ folder, resourceType }),
   });
-  if (!res.ok) throw new Error("Could not get an upload signature");
+  if (!res.ok) {
+    if (res.status === 401) {
+      throw new Error("Your session has expired. Please sign in again.");
+    }
+    throw new Error("Could not get an upload signature");
+  }
   return res.json();
 }
 
@@ -94,8 +99,8 @@ export function ImageUploader({
       const signature = await requestSignature(folder, "image");
       const url = await uploadWithProgress(file, signature, setProgress);
       onChange(url);
-    } catch {
-      toast.error("Upload failed. Try again.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Upload failed. Try again.");
     } finally {
       setProgress(null);
     }
@@ -213,8 +218,8 @@ export function FileUploader({
       const signature = await requestSignature(folder, "raw");
       const url = await uploadWithProgress(file, signature, setProgress);
       onChange(url);
-    } catch {
-      toast.error("Upload failed. Try again.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Upload failed. Try again.");
     } finally {
       setProgress(null);
     }
