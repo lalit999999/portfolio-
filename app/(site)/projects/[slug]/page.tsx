@@ -12,7 +12,7 @@ import {
   SquareArrowOutUpRight,
 } from "lucide-react";
 
-import { getAdjacentProjects, getProjectBySlug, getProjectSlugs } from "@/lib/data";
+import { getAdjacentProjects, getProjectBySlug } from "@/lib/data";
 import { formatMonthYear } from "@/lib/utils/date";
 import { getBrandIcon } from "@/lib/icons";
 import { Badge } from "@/components/ui/badge";
@@ -22,15 +22,6 @@ import { CountUp, Reveal } from "@/components/motion";
 const githubIcon = getBrandIcon("github");
 
 export const revalidate = 3600;
-
-export async function generateStaticParams() {
-  try {
-    const slugs = await getProjectSlugs();
-    return slugs.map((slug) => ({ slug }));
-  } catch {
-    return [];
-  }
-}
 
 export async function generateMetadata(
   props: PageProps<"/projects/[slug]">
