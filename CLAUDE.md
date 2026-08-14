@@ -14,12 +14,16 @@ content: `/`, `/projects`, `/projects/[slug]`, `/skills`, `/certifications`, `/b
 `app/layout.tsx` sets real metadata (title derived from the profile data, not the CNA
 default).
 
-**Branch `phase-4-a-foundation` (not yet merged) adds real `/lalit` auth, a real admin
-shell, real shared admin primitives, and — merged in from session B's
-`phase-4-b-content` branch — real CRUD UI for four collections** — see "Phase 4 (in
-progress)" below. On `main`, `/admin` is still the middleware- and layout-guarded
-Phase 3 placeholder; on this branch `/admin` no longer exists at all, superseded by
-`/lalit`.
+**Phase 4 sessions A and B are merged into `main`** (`phase-4-a-foundation`, with
+session B's `phase-4-b-content` merged in on top): real `/lalit` auth, a real admin
+shell, real shared admin primitives, and real CRUD UI for four collections — see
+"Phase 4 (in progress)" below. `/admin` no longer exists; it's superseded by `/lalit`.
+
+A third branch, `phase-4-c-ops` (session C), adds blog-sources/inbox/playground-admin/
+profile/socials CRUD plus a full admin dashboard, but **is not merged into `main`** —
+it's an open PR blocked on real conflicts (file-ownership overlaps and a route-group
+restructure). Don't assume any of session C's routes or files exist on `main` until
+that PR lands.
 
 Routes read from MongoDB via `lib/db.ts` / `models/**` (12 Mongoose models). Without a
 live `MONGODB_URI` (`.env.local`, gitignored) some routes will error — that's a
@@ -138,11 +142,12 @@ those are v4 names and NextAuth v5 silently ignores them.
 
 ## Phase 4 (in progress)
 
-`phase-4-a-foundation` branch. Auth, the admin shell, and the shared admin primitives
-are real. Session B's `phase-4-b-content` branch is merged in on top, so **certifications,
-education, projects, and skills also have real per-collection CRUD UI now** — see below
-for what's still a placeholder. Details and decisions in `docs/PHASE4-A.md` (this
-session) and `docs/PHASE4-B.md` (session B).
+Sessions A (`phase-4-a-foundation`) and B (`phase-4-b-content`, merged into A) are both
+on `main`. Auth, the admin shell, the shared admin primitives, and **certifications,
+education, projects, and skills CRUD UI** are all real and merged — see below for
+what's still a placeholder. Details and decisions in `docs/PHASE4-A.md` (session A) and
+`docs/PHASE4-B.md` (session B). Session C (`phase-4-c-ops`) is not merged — see
+"Current state" above.
 
 - **New deps** (the only Phase 4 `npm install`): `react-hook-form`,
   `@hookform/resolvers` (v5, required for Zod 4 — v3 does not support it),
@@ -201,8 +206,9 @@ session) and `docs/PHASE4-B.md` (session B).
   for skills, the UI doesn't link to them. Supporting data-layer reads live in
   `lib/admin/{certifications,education,projects,skills}.ts`, with shared Mongoose→JSON
   shaping in `lib/admin/serialize.ts`. blog-sources, inbox, playground, profile, and
-  socials are still "Coming in Phase 4" placeholders — that CRUD UI is later work, out
-  of scope for both sessions A and B.
+  socials are still "Coming in Phase 4" placeholders on `main` — that CRUD UI exists on
+  the unmerged `phase-4-c-ops` branch (session C), not because it's unscheduled but
+  because that branch hasn't landed yet (see "Current state" above).
 - **New env vars**: `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`,
   `CLOUDINARY_API_SECRET`, `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` (see `.env.example`) —
   without these `/api/admin/upload` 500s.
