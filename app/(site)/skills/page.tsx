@@ -5,9 +5,16 @@ import { SkillsExplorer } from "./skills-explorer";
 
 export const revalidate = 3600;
 
+const title = "Skills";
+const description = "Languages, frameworks, and tools I work with, by category.";
+
+// Explicit openGraph here, not just title/description: Next only merges
+// per-segment metadata shallowly — a page that omits openGraph inherits the
+// root layout's whole object (its title/description), not this page's.
 export const metadata: Metadata = {
-  title: "Skills",
-  description: "Languages, frameworks, and tools I work with, by category.",
+  title,
+  description,
+  openGraph: { title, description, type: "website" },
 };
 
 export default async function SkillsPage() {

@@ -5,9 +5,16 @@ import { BlogsGrid } from "./blogs-grid";
 
 export const revalidate = 3600;
 
+const title = "Blog";
+const description = "Writing on web development, from across my publications.";
+
+// Explicit openGraph here, not just title/description: Next only merges
+// per-segment metadata shallowly — a page that omits openGraph inherits the
+// root layout's whole object (its title/description), not this page's.
 export const metadata: Metadata = {
-  title: "Blog",
-  description: "Writing on web development, from across my publications.",
+  title,
+  description,
+  openGraph: { title, description, type: "website" },
 };
 
 export default async function BlogsPage() {

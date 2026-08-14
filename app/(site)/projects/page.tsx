@@ -5,9 +5,16 @@ import { ProjectsGrid } from "./projects-grid";
 
 export const revalidate = 3600;
 
+const title = "Projects";
+const description = "Full-stack apps, real-time systems, and side projects.";
+
+// Explicit openGraph here, not just title/description: Next only merges
+// per-segment metadata shallowly — a page that omits openGraph inherits the
+// root layout's whole object (its title/description), not this page's.
 export const metadata: Metadata = {
-  title: "Projects",
-  description: "Full-stack apps, real-time systems, and side projects.",
+  title,
+  description,
+  openGraph: { title, description, type: "website" },
 };
 
 export default async function ProjectsPage() {

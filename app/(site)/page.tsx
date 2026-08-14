@@ -17,6 +17,8 @@ import { LatestPosts } from "@/components/portfolio/latest-posts";
 import { Learning } from "@/components/portfolio/learning";
 import { Socials } from "@/components/portfolio/socials";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
 export const revalidate = 3600;
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -46,8 +48,24 @@ export default async function Home() {
     );
   }
 
+  const personJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: profile.name,
+    description: profile.tagline,
+    url: siteUrl,
+    ...(profile.avatarUrl && { image: profile.avatarUrl }),
+    ...(profile.email && { email: profile.email }),
+    ...(profile.location && { address: profile.location }),
+    ...(socials.length > 0 && { sameAs: socials.map((social) => social.url) }),
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
       <Hero profile={profile} />
       <About profile={profile} />
       <Education education={education} />

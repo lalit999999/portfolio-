@@ -15,9 +15,16 @@ import { Stagger } from "@/components/motion";
 
 export const revalidate = 3600;
 
+const title = "Certifications";
+const description = "Certifications and credentials I've earned.";
+
+// Explicit openGraph here, not just title/description: Next only merges
+// per-segment metadata shallowly — a page that omits openGraph inherits the
+// root layout's whole object (its title/description), not this page's.
 export const metadata: Metadata = {
-  title: "Certifications",
-  description: "Certifications and credentials I've earned.",
+  title,
+  description,
+  openGraph: { title, description, type: "website" },
 };
 
 export default async function CertificationsPage() {

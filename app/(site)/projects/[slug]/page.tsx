@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { CountUp, Reveal } from "@/components/motion";
 
 const githubIcon = getBrandIcon("github");
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 export const revalidate = 3600;
 
@@ -33,9 +34,16 @@ export async function generateMetadata(
   return {
     title: project.title,
     description: project.summary,
-    openGraph: project.imageUrl
-      ? { images: [{ url: project.imageUrl }] }
-      : undefined,
+    // Defining openGraph at all replaces the root layout's whole object
+    // (shallow per-segment merge), so title/description/type must be
+    // repeated here too, not just images — otherwise a project page's
+    // share preview would have an image but no title or description.
+    openGraph: {
+      title: project.title,
+      description: project.summary,
+      type: "website",
+      ...(project.imageUrl && { images: [{ url: project.imageUrl }] }),
+    },
   };
 }
 
@@ -55,8 +63,24 @@ export default async function ProjectDetailPage(
     .map((p) => p.trim())
     .filter(Boolean);
 
+  const projectJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareSourceCode",
+    name: project.title,
+    description: project.summary,
+    url: `${siteUrl}/projects/${project.slug}`,
+    programmingLanguage: project.tech,
+    ...(project.imageUrl && { image: project.imageUrl }),
+    ...(project.githubUrl && { codeRepository: project.githubUrl }),
+    ...(project.startDate && { dateCreated: project.startDate }),
+  };
+
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-10 px-4 py-16 sm:px-6 lg:px-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(projectJsonLd) }}
+      />
       <Link
         href={"/projects" as Route}
         className="inline-flex w-fit items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"

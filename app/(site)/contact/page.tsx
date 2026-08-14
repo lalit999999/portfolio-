@@ -8,9 +8,16 @@ import { SectionHeading } from "@/components/portfolio/section-heading";
 import { Reveal } from "@/components/motion";
 import { ContactForm } from "./contact-form";
 
+const title = "Contact";
+const description = "Get in touch — send a message or find me on socials.";
+
+// Explicit openGraph here, not just title/description: Next only merges
+// per-segment metadata shallowly — a page that omits openGraph inherits the
+// root layout's whole object (its title/description), not this page's.
 export const metadata: Metadata = {
-  title: "Contact",
-  description: "Get in touch — send a message or find me on socials.",
+  title,
+  description,
+  openGraph: { title, description, type: "website" },
 };
 
 export default async function ContactPage() {
