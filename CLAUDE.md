@@ -107,11 +107,12 @@ NextAuth v5 (`next-auth@beta`), GitHub provider, JWT sessions — no adapter, no
 sessions. The split is mandatory and easy to get wrong:
 
 - `auth.config.ts` — edge-safe only (providers, `session.strategy`, `pages`, the
-  `authorized` callback). Bundled into `middleware.ts`, which runs on the edge runtime.
+  `authorized` callback). Bundled into `proxy.ts` (renamed from `middleware.ts` in
+  Phase 5 — Next 16.3 deprecated the `middleware` file convention in favor of `proxy`).
   **Never import `mongoose`, `@/lib/db`, or `@/models` from this file or its import
-  graph** — that silently balloons the edge bundle and can break the build with an
-  opaque module-resolution error. `middleware.ts` instantiates `NextAuth(authConfig)`
-  directly; it never imports `auth` from `@/auth`, for the same reason.
+  graph** — that silently balloons the bundle and can break the build with an opaque
+  module-resolution error. `proxy.ts` instantiates `NextAuth(authConfig)` directly; it
+  never imports `auth` from `@/auth`, for the same reason.
 - `auth.ts` — Node runtime. Spreads `auth.config.ts` and adds the DB-touching
   `signIn`/`jwt`/`session` callbacks (upserts `User` on sign-in, stamps Mongo `_id` +
   `role` onto the JWT, copies them onto `session.user`).
@@ -162,7 +163,7 @@ cross-session bug log worth reading before touching shared files like
 - **`/admin` is gone, superseded by `/lalit`.** The Phase 3 placeholder at `/admin`
   was deleted; all admin routes live under `/lalit` now (site-owner's name instead of
   `/admin`, for obscurity — a deliberate Phase 4 IA choice, not a typo).
-  `middleware.ts` guards `["/lalit/:path*"]`: unauthenticated → redirect to
+  `proxy.ts` guards `["/lalit/:path*"]`: unauthenticated → redirect to
   `/lalit/signin?callbackUrl=...` (with `/lalit/signin` itself let through
   unconditionally, or it'd redirect to itself forever); authenticated non-admin →
   `NextResponse.rewrite` to `/lalit/403` (rewrite, not redirect, so a rewritten

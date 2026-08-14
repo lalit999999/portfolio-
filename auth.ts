@@ -1,7 +1,7 @@
 import NextAuth, { type Session } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 
-import authConfig from "./auth.config";
+import authConfig, { projectTokenToSession } from "./auth.config";
 import dbConnect from "@/lib/db";
 import User from "@/models/User";
 
@@ -66,13 +66,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
 
     async session({ session, token }: { session: Session; token: JWT }) {
-      if (token.id) session.user.id = token.id;
-      if (token.githubId) session.user.githubId = token.githubId;
-      if (token.username) session.user.username = token.username;
-      if (token.role) session.user.role = token.role;
-      if (typeof token.isBanned === "boolean")
-        session.user.isBanned = token.isBanned;
-      return session;
+      return projectTokenToSession(session, token);
     },
   },
 });
