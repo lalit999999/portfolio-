@@ -1,6 +1,5 @@
 "use client";
 
-// STUB — Phase 4 Session A owns this file. Do not edit it from another session.
 import type { Route } from "next";
 import Link from "next/link";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";

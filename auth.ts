@@ -33,7 +33,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             },
             $setOnInsert: { role, isBanned: false },
           },
-          { upsert: true, new: true }
+          { upsert: true, new: true },
         );
 
         if (user.isBanned) return false;

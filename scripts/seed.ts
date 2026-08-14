@@ -11,6 +11,7 @@ import path from "node:path";
 import fs from "node:fs";
 import readline from "node:readline/promises";
 import mongoose from "mongoose";
+import type { z } from "zod";
 
 dotenv.config({ path: path.resolve(process.cwd(), ".env.local") });
 
@@ -69,14 +70,14 @@ async function confirmFreshRun(mongodbUri: string) {
 // 1. Load JSON
 // ---------------------------------------------------------------------------
 
-const profileData = readJson<any>("profile.json");
-const educationData = readJson<any[]>("education.json");
-const skillCategoryData = readJson<any[]>("skill-categories.json");
-const skillData = readJson<any[]>("skills.json");
-const projectData = readJson<any[]>("projects.json");
-const certificationData = readJson<any[]>("certifications.json");
-const socialData = readJson<any[]>("socials.json");
-const blogSourceData = readJson<any[]>("blog-sources.json");
+const profileData = readJson<z.output<typeof profileCreateSchema>>("profile.json");
+const educationData = readJson<z.output<typeof educationCreateSchema>[]>("education.json");
+const skillCategoryData = readJson<z.output<typeof skillCategoryCreateSchema>[]>("skill-categories.json");
+const skillData = readJson<z.output<typeof skillCreateSchema>[]>("skills.json");
+const projectData = readJson<z.output<typeof projectCreateSchema>[]>("projects.json");
+const certificationData = readJson<z.output<typeof certificationCreateSchema>[]>("certifications.json");
+const socialData = readJson<z.output<typeof socialCreateSchema>[]>("socials.json");
+const blogSourceData = readJson<z.output<typeof blogSourceCreateSchema>[]>("blog-sources.json");
 
 // ---------------------------------------------------------------------------
 // 2. Validate everything BEFORE any write. Nothing half-seeds.
@@ -87,7 +88,7 @@ const errors: ValidationError[] = [];
 
 function validateAll<T>(
   records: T[],
-  schema: { safeParse: (v: unknown) => any },
+  schema: { safeParse: (v: unknown) => z.ZodSafeParseResult<T> },
   identify: (record: T) => string
 ) {
   for (const record of records) {
@@ -96,7 +97,7 @@ function validateAll<T>(
       errors.push({
         identifier: identify(record),
         issues: result.error.issues
-          .map((i: any) => `${i.path.join(".")}: ${i.message}`)
+          .map((i) => `${i.path.join(".")}: ${i.message}`)
           .join("; "),
       });
     }
@@ -108,7 +109,7 @@ if (!profileResult.success) {
   errors.push({
     identifier: "profile (singleton)",
     issues: profileResult.error.issues
-      .map((i: any) => `${i.path.join(".")}: ${i.message}`)
+      .map((i) => `${i.path.join(".")}: ${i.message}`)
       .join("; "),
   });
 }
@@ -199,7 +200,7 @@ async function main() {
     { slug: { $in: skillCategoryData.map((c) => c.slug) } },
     { slug: 1 }
   ).lean();
-  const slugToId = new Map(categories.map((c: any) => [c.slug, c._id]));
+  const slugToId = new Map(categories.map((c) => [c.slug, c._id]));
 
   const resolvedSkills = skillData.map((s) => {
     const categoryId = slugToId.get(s.category);

@@ -14,6 +14,13 @@
 import fs from "node:fs";
 import path from "node:path";
 
+// This whole script evaluates arbitrary object-literal text from the old
+// portfolio1 project (see evalExportedLiteral below) — there is no static
+// shape to check it against, so give the dynamic parts a single named,
+// documented escape hatch instead of sprinkling bare `any` everywhere.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Legacy = any;
+
 // ---------------------------------------------------------------------------
 // Old data location
 // ---------------------------------------------------------------------------
@@ -122,7 +129,7 @@ function evalExportedLiteral(source: string, exportName: string): unknown {
   }
   let literal = source.slice(idx + marker.length).trim();
   if (literal.endsWith(";")) literal = literal.slice(0, -1);
-  // eslint-disable-next-line no-new-func
+   
   return new Function(`"use strict"; return (${literal});`)();
 }
 
@@ -142,12 +149,12 @@ const blogConfigRaw = fs.readFileSync(
 const portfolioData = evalExportedLiteral(
   stripLucideImportAndTagIcons(portfolioDataRaw),
   "portfolioData"
-) as any;
+) as Legacy;
 
 const blogConfigurations = evalExportedLiteral(
   stripLucideImportAndTagIcons(blogConfigRaw),
   "blogConfigurations"
-) as any[];
+) as Legacy[];
 
 // ---------------------------------------------------------------------------
 // Content fixes log
@@ -251,7 +258,7 @@ function parseEducationYears(raw: string): { startDate: Date; endDate?: Date } {
   throw new Error(`FAILED TO PARSE EDUCATION YEAR: "${raw}"`);
 }
 
-const education = portfolioData.education.map((e: any, index: number) => {
+const education = portfolioData.education.map((e: Legacy, index: number) => {
   const { startDate, endDate } = parseEducationYears(e.year);
   return {
     institution: e.institution,
@@ -264,7 +271,7 @@ const education = portfolioData.education.map((e: any, index: number) => {
     isVisible: true,
   };
 });
-if (portfolioData.education.some((e: any) => e.board)) {
+if (portfolioData.education.some((e: Legacy) => e.board)) {
   fixesApplied.push(
     'education: no schema field for "board" — folded into `description` as "Board: <value>"'
   );
@@ -283,7 +290,7 @@ fs.writeFileSync(
 // ---------------------------------------------------------------------------
 
 const skillCategorySlugs = new Set<string>();
-const skillCategories = portfolioData.skills.map((group: any, index: number) => {
+const skillCategories = portfolioData.skills.map((group: Legacy, index: number) => {
   const slug = uniqueSlug(slugify(group.category), skillCategorySlugs);
   return {
     name: group.category,
@@ -300,10 +307,10 @@ fs.writeFileSync(
 
 const PLACEHOLDER_PROFICIENCY = 75;
 
-const skills: any[] = [];
-portfolioData.skills.forEach((group: any, groupIndex: number) => {
+const skills: Legacy[] = [];
+portfolioData.skills.forEach((group: Legacy, groupIndex: number) => {
   const categorySlug = skillCategories[groupIndex].slug;
-  group.items.forEach((item: any, itemIndex: number) => {
+  group.items.forEach((item: Legacy, itemIndex: number) => {
     skills.push({
       name: item.name,
       iconName: item.iconName,
@@ -340,13 +347,13 @@ function deriveSummary(description: string): string {
 const projectSlugs = new Set<string>();
 const slugTable: Array<{ title: string; slug: string }> = [];
 
-const projects = portfolioData.projects.map((p: any, index: number) => {
+const projects = portfolioData.projects.map((p: Legacy, index: number) => {
   const baseSlug = slugify(p.title);
   const slug = uniqueSlug(baseSlug, projectSlugs);
   slugTable.push({ title: p.title, slug });
 
   let liveUrl = p.live;
-  let githubUrl = p.github;
+  const githubUrl = p.github;
   if (p.title.includes("MiniYouTube") && p.live === p.github) {
     fixesApplied.push(
       `project "${p.title}": liveUrl pointed at GitHub URL, cleared to ""`
@@ -379,7 +386,7 @@ fs.writeFileSync(
 // certifications.json
 // ---------------------------------------------------------------------------
 
-const certifications = portfolioData.certifications.map((c: any, index: number) => {
+const certifications = portfolioData.certifications.map((c: Legacy, index: number) => {
   const issueDate = parseMonthYearToISO(c.date);
   return {
     title: c.title,
@@ -403,7 +410,7 @@ fs.writeFileSync(
 // socials.json
 // ---------------------------------------------------------------------------
 
-const socials = portfolioData.socials.map((s: any, index: number) => ({
+const socials = portfolioData.socials.map((s: Legacy, index: number) => ({
   name: s.name,
   url: s.url,
   iconName: s.iconName,
@@ -421,7 +428,7 @@ fs.writeFileSync(
 // ---------------------------------------------------------------------------
 
 const seenHosts = new Set<string>();
-const blogSources: any[] = [];
+const blogSources: Legacy[] = [];
 let order = 0;
 
 for (const entry of blogConfigurations) {

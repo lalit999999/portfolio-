@@ -45,6 +45,10 @@ export function SkillCard({
               <path d={brandIcon.path} />
             </svg>
           ) : (
+            // getIcon() looks up a stable reference in a static module-level
+            // map (lib/icons.ts) — it never defines a new component, so this
+            // isn't the render-time component creation the rule guards against.
+            // eslint-disable-next-line react-hooks/static-components
             <FallbackIcon aria-hidden className="size-5" />
           )}
         </span>

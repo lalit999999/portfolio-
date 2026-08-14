@@ -95,6 +95,10 @@ function Carousel({
 
   React.useEffect(() => {
     if (!api) return
+    // Seed the initial scroll-button state from the freshly-created embla
+    // instance, then keep it in sync via the subscriptions below. Unmodified
+    // shadcn/ui template code — see CLAUDE.md on editing components/ui/.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     onSelect(api)
     api.on("reInit", onSelect)
     api.on("select", onSelect)

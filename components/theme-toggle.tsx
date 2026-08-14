@@ -12,13 +12,24 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-export function ThemeToggle() {
-  const [mounted, setMounted] = React.useState(false);
-  const { setTheme } = useTheme();
+function subscribeNever() {
+  return () => {};
+}
 
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
+// Hydration-safe "has the client mounted" check: useSyncExternalStore serves
+// the server snapshot during hydration and the client one right after, without
+// the extra render pass a manual `useEffect(() => setMounted(true), [])` causes.
+function useMounted() {
+  return React.useSyncExternalStore(
+    subscribeNever,
+    () => true,
+    () => false
+  );
+}
+
+export function ThemeToggle() {
+  const mounted = useMounted();
+  const { setTheme } = useTheme();
 
   if (!mounted) {
     return (

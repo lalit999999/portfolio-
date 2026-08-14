@@ -1,20 +1,25 @@
 "use client";
 
-// STUB — Phase 4 Session A owns this file. Do not edit it from another session.
 import type * as React from "react";
+import { useEffect, useTransition } from "react";
 import type { Route } from "next";
-import type { DefaultValues, FieldValues, Resolver, UseFormReturn } from "react-hook-form";
+import Link from "next/link";
+import type {
+  DefaultValues,
+  FieldValues,
+  Resolver,
+  UseFormReturn,
+} from "react-hook-form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import type { z } from "zod";
+import { toast } from "sonner";
 
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import type { AdminActionState } from "@/types/admin";
 
-// TSchema extends z.ZodType<FieldValues, FieldValues>, not the bare z.ZodType:
-// zod v4's ZodType<Output = unknown, Input = unknown, ...> defaults both
-// unconstrained, so z.input<TSchema> resolved to `unknown` and failed
-// react-hook-form's FieldValues bound on useForm/UseFormReturn below.
-export interface EntityFormProps<TSchema extends z.ZodType<FieldValues, FieldValues>> {
+export interface EntityFormProps<TSchema extends z.ZodType<unknown, FieldValues>> {
   schema: TSchema;
   defaultValues: DefaultValues<z.input<TSchema>>;
   action: (values: z.output<TSchema>) => Promise<AdminActionState>;
@@ -25,36 +30,75 @@ export interface EntityFormProps<TSchema extends z.ZodType<FieldValues, FieldVal
   successMessage?: string;
 }
 
-export function EntityForm<TSchema extends z.ZodType<FieldValues, FieldValues>>({
+export function EntityForm<TSchema extends z.ZodType<unknown, FieldValues>>({
   schema,
   defaultValues,
   action,
   children,
   submitLabel = "Save",
+  cancelHref,
   onSuccess,
+  successMessage = "Saved.",
 }: EntityFormProps<TSchema>) {
-  // zodResolver's overloaded generic signature infers against TSchema's
-  // constraint (FieldValues) rather than TSchema itself when the schema's
-  // type is a type parameter, not a concrete schema — the cast bridges what
-  // TS can't prove but is true by construction: schema is a TSchema, so this
-  // resolver really does produce z.input<TSchema>.
+  const [isPending, startTransition] = useTransition();
   const form = useForm<z.input<TSchema>>({
+    // react-hook-form's zodResolver widens the output to a generic FieldValues
+    // when the schema type param is itself generic; narrow it back explicitly
+    // rather than losing type safety with `as any`.
     resolver: zodResolver(schema) as unknown as Resolver<z.input<TSchema>>,
     defaultValues,
     mode: "onBlur",
   });
 
-  const onSubmit = form.handleSubmit(async (values) => {
-    const state = await action(values as z.output<TSchema>);
-    onSuccess?.(state);
+  const { isDirty } = form.formState;
+
+  useEffect(() => {
+    if (!isDirty) return;
+    function handleBeforeUnload(e: BeforeUnloadEvent) {
+      e.preventDefault();
+    }
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty]);
+
+  const onSubmit = form.handleSubmit((values) => {
+    startTransition(async () => {
+      const state = await action(values as z.output<TSchema>);
+
+      if (state.status === "error") {
+        if (state.fields) {
+          for (const [name, messages] of Object.entries(state.fields)) {
+            form.setError(name as never, { message: messages[0] });
+          }
+        } else {
+          toast.error(state.message);
+        }
+        onSuccess?.(state);
+        return;
+      }
+
+      if (state.status === "success") {
+        toast.success(state.message ?? successMessage);
+        form.reset(values);
+      }
+      onSuccess?.(state);
+    });
   });
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-6">
       {children(form)}
-      <button type="submit" className="hidden">
-        {submitLabel}
-      </button>
+      <div className="flex items-center gap-2">
+        <Button type="submit" disabled={isPending}>
+          {isPending && <Spinner data-icon="inline-start" />}
+          {submitLabel}
+        </Button>
+        {cancelHref && (
+          <Button type="button" variant="ghost" asChild disabled={isPending}>
+            <Link href={cancelHref}>Cancel</Link>
+          </Button>
+        )}
+      </div>
     </form>
   );
 }
