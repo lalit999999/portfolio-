@@ -1,6 +1,13 @@
-// DB-backed rate limiting. Unlike app/contact/actions.ts's in-memory Map,
-// this coordinates across serverless instances because the state lives in
-// Mongo, not process memory.
+// DB-backed rate limiting. Unlike app/contact/actions.ts's old in-memory Map,
+// this already coordinates across serverless instances because the state
+// lives in Mongo, not process memory. Phase 5 added Upstash Redis for the
+// contact form, but this stays on Mongo deliberately: checkAndConsume does
+// an atomic findOneAndUpdate combining the ban check and the cooldown
+// check-and-set in one query. Moving just the cooldown counter to Redis
+// would split that into two systems that can race (banned-but-not-yet-synced
+// user squeezes in a message) and would still need a Mongo read for
+// isBanned, so nothing round-trips less — it would only add a dependency
+// for a coordination problem this already solves. See docs/PHASE5.md.
 import dbConnect from "@/lib/db";
 import { PlaygroundMessage, User } from "@/models";
 import {
