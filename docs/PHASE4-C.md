@@ -113,17 +113,24 @@ or worked around without touching another session's frozen file — see each ent
   `mongoose`/`mongodb` into the browser bundle (`Module not found: 'tls'`/`'net'`).
   **Fixed:** pass `platforms` down as a prop from the two server-component pages instead.
 
-## Security gap found, not fixed (Session A's file)
+## Security gap found on this branch — resolved on merge into main
 
-**`middleware.ts`'s matcher is still `["/admin/:path*"]`**, stale from before the admin
-routes moved to `/lalit/*` in Session A's Step 0 restructuring. Confirmed live: every
-`/lalit/*` page (verified `/lalit/profile`, `/lalit/socials`, `/lalit/blog-sources`,
-`/lalit/inbox`, `/lalit/playground`) returns `200` to an unauthenticated `curl`, no
-redirect to `/login`. Mutations are still safe — every Session C server action calls
-`requireAdmin()` as its first line, verified by grep — but **page views currently leak
-to anyone who knows the URL**: contact message content, playground member lists, etc.
-`middleware.ts` is explicitly Session A's file (auth stack), so this wasn't fixed here;
-flagging it as the most important open item for Session A/Lalit before this merges.
+**`middleware.ts`'s matcher was `["/admin/:path*"]`** on this branch, stale from before
+the admin routes moved to `/lalit/*` in Session A's Step 0 restructuring. Confirmed live
+at the time: every `/lalit/*` page (verified `/lalit/profile`, `/lalit/socials`,
+`/lalit/blog-sources`, `/lalit/inbox`, `/lalit/playground`) returned `200` to an
+unauthenticated `curl`, no redirect to `/login`. Mutations were still safe — every
+Session C server action calls `requireAdmin()` as its first line, verified by grep — but
+page views leaked to anyone who knew the URL: contact message content, playground member
+lists, etc.
+
+Session C never touched `middleware.ts` (explicitly Session A's file), so this branch's
+copy stayed frozen at the pre-restructure matcher while Session A fixed it independently
+on `main` (`["/lalit/:path*"]`). Because Session C's side was unchanged from the
+merge-base, `git merge main` took Session A's fixed matcher automatically with no
+conflict — **the gap does not exist post-merge.** Verified on the merged branch:
+`middleware.ts` matcher is `["/lalit/:path*"]`. Recorded here so a future reader doesn't
+re-discover this and "fix" an already-correct matcher.
 
 ## Known gaps carried over
 
