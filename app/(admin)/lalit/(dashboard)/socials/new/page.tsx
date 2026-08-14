@@ -1,32 +1,11 @@
-// Placeholder — per-collection admin UI is outside Session A's scope
-// (auth, shell, shared primitives). Real content lands with this collection's
-// admin page in a later session.
-import { Hammer } from "lucide-react";
-
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
-import {
-  Empty,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-  EmptyDescription,
-} from "@/components/ui/empty";
+import { SocialForm } from "../social-form";
 
-export default async function Page(props: PageProps<"/lalit/socials/new">) {
-  await props.params;
-
+export default function Page() {
   return (
     <div className="flex flex-col gap-6">
-      <AdminPageHeader title="New social link" />
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <Hammer aria-hidden />
-          </EmptyMedia>
-          <EmptyTitle>Coming in Phase 4</EmptyTitle>
-          <EmptyDescription>This section is not built yet.</EmptyDescription>
-        </EmptyHeader>
-      </Empty>
+      <AdminPageHeader title="Add social link" />
+      <SocialForm />
     </div>
   );
 }

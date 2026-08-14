@@ -1,32 +1,30 @@
-// Placeholder — per-collection admin UI is outside Session A's scope
-// (auth, shell, shared primitives). Real content lands with this collection's
-// admin page in a later session.
-import { Hammer } from "lucide-react";
-
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
-import {
-  Empty,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-  EmptyDescription,
-} from "@/components/ui/empty";
+import { getAdminMessages, getUnreadMessageCount, type InboxFilter } from "@/lib/admin/messages";
+import { InboxList } from "./inbox-list";
+
+const VALID_FILTERS: InboxFilter[] = ["unread", "all", "archived"];
 
 export default async function Page(props: PageProps<"/lalit/inbox">) {
-  await props.params;
+  const searchParams = await props.searchParams;
+  const rawFilter = Array.isArray(searchParams.filter)
+    ? searchParams.filter[0]
+    : searchParams.filter;
+  const filter: InboxFilter = VALID_FILTERS.includes(rawFilter as InboxFilter)
+    ? (rawFilter as InboxFilter)
+    : "unread";
+
+  const [messages, unreadCount] = await Promise.all([
+    getAdminMessages(filter),
+    getUnreadMessageCount(),
+  ]);
 
   return (
     <div className="flex flex-col gap-6">
-      <AdminPageHeader title="Inbox" />
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <Hammer aria-hidden />
-          </EmptyMedia>
-          <EmptyTitle>Coming in Phase 4</EmptyTitle>
-          <EmptyDescription>This section is not built yet.</EmptyDescription>
-        </EmptyHeader>
-      </Empty>
+      <AdminPageHeader
+        title="Inbox"
+        description="Messages submitted through the public contact form."
+      />
+      <InboxList messages={messages} filter={filter} unreadCount={unreadCount} />
     </div>
   );
 }

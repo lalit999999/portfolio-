@@ -1,32 +1,19 @@
-// Placeholder — per-collection admin UI is outside Session A's scope
-// (auth, shell, shared primitives). Real content lands with this collection's
-// admin page in a later session.
-import { Hammer } from "lucide-react";
+import { notFound } from "next/navigation";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
-import {
-  Empty,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-  EmptyDescription,
-} from "@/components/ui/empty";
+import { getAdminMessage } from "@/lib/admin/messages";
+import { MessageDetail } from "../message-detail";
 
 export default async function Page(props: PageProps<"/lalit/inbox/[id]">) {
-  await props.params;
+  const { id } = await props.params;
+  const message = await getAdminMessage(id);
+
+  if (!message) notFound();
 
   return (
     <div className="flex flex-col gap-6">
       <AdminPageHeader title="Message" />
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <Hammer aria-hidden />
-          </EmptyMedia>
-          <EmptyTitle>Coming in Phase 4</EmptyTitle>
-          <EmptyDescription>This section is not built yet.</EmptyDescription>
-        </EmptyHeader>
-      </Empty>
+      <MessageDetail message={message} />
     </div>
   );
 }

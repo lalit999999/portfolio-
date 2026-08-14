@@ -1,7 +1,4 @@
-// Placeholder — per-collection admin UI is outside Session A's scope
-// (auth, shell, shared primitives). Real content lands with this collection's
-// admin page in a later session.
-import { Hammer } from "lucide-react";
+import { UserRound } from "lucide-react";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
 import {
@@ -11,22 +8,41 @@ import {
   EmptyTitle,
   EmptyDescription,
 } from "@/components/ui/empty";
+import { getAdminProfile } from "@/lib/admin/profile";
+import { ProfileForm } from "./profile-form";
+import { ResumeManager } from "./resume-manager";
 
-export default async function Page(props: PageProps<"/lalit/profile">) {
-  await props.params;
+export default async function Page() {
+  const profile = await getAdminProfile();
 
   return (
     <div className="flex flex-col gap-6">
-      <AdminPageHeader title="Profile" />
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <Hammer aria-hidden />
-          </EmptyMedia>
-          <EmptyTitle>Coming in Phase 4</EmptyTitle>
-          <EmptyDescription>This section is not built yet.</EmptyDescription>
-        </EmptyHeader>
-      </Empty>
+      <AdminPageHeader
+        title="Profile"
+        description="The single source of truth for the site's hero, bio, and resume."
+      />
+
+      {profile ? (
+        <>
+          <ProfileForm profile={profile} />
+          <ResumeManager resumeUrl={profile.resumeUrl} />
+        </>
+      ) : (
+        <>
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <UserRound aria-hidden />
+              </EmptyMedia>
+              <EmptyTitle>No profile yet</EmptyTitle>
+              <EmptyDescription>
+                Create the profile document to start editing your site&apos;s hero and bio.
+              </EmptyDescription>
+            </EmptyHeader>
+          </Empty>
+          <ProfileForm profile={null} />
+        </>
+      )}
     </div>
   );
 }

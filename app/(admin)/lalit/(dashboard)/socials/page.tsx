@@ -1,32 +1,29 @@
-// Placeholder — per-collection admin UI is outside Session A's scope
-// (auth, shell, shared primitives). Real content lands with this collection's
-// admin page in a later session.
-import { Hammer } from "lucide-react";
+import { Plus } from "lucide-react";
+import Link from "next/link";
 
 import { AdminPageHeader } from "@/components/admin/admin-page-header";
-import {
-  Empty,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-  EmptyDescription,
-} from "@/components/ui/empty";
+import { Button } from "@/components/ui/button";
+import { getAdminSocials } from "@/lib/admin/socials";
+import { SocialList } from "./social-list";
 
-export default async function Page(props: PageProps<"/lalit/socials">) {
-  await props.params;
+export default async function Page() {
+  const socials = await getAdminSocials();
 
   return (
     <div className="flex flex-col gap-6">
-      <AdminPageHeader title="Socials" />
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <Hammer aria-hidden />
-          </EmptyMedia>
-          <EmptyTitle>Coming in Phase 4</EmptyTitle>
-          <EmptyDescription>This section is not built yet.</EmptyDescription>
-        </EmptyHeader>
-      </Empty>
+      <AdminPageHeader
+        title="Socials"
+        description="Shown in the site footer. Drag to reorder."
+        actions={
+          <Button asChild>
+            <Link href="/lalit/socials/new">
+              <Plus aria-hidden />
+              Add social link
+            </Link>
+          </Button>
+        }
+      />
+      <SocialList socials={socials} />
     </div>
   );
 }
