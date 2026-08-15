@@ -150,6 +150,20 @@ import {
 } from "simple-icons";
 import type { CertColor } from "@/models/Certification";
 
+// simple-icons dropped LinkedIn (and lucide-react never carried it) after a
+// trademark takedown request, so there's no packaged brand icon to import.
+// Path below is `public/linkedinicon.svg`'s artwork, rescaled from its native
+// -50.44 -50.44 605.28 605.28 viewBox into the 0 0 24 24 space every brand
+// icon in this map is rendered in.
+const linkedinIcon: SimpleIcon = {
+  title: "LinkedIn",
+  slug: "linkedin",
+  hex: "0A66C2",
+  source: "public/linkedinicon.svg",
+  svg: "",
+  path: "M16.972,2.008 L7.012,2.008 C4.252,2.008 2,4.26 2,7.02 L2,16.996 C2,19.74 4.252,21.992 7.012,21.992 L16.988,21.992 C19.748,21.992 22,19.74 22,16.98 L22,7.02 C21.984,4.26 19.732,2.008 16.972,2.008 Z M8.661,18.186 L5.807,18.186 L5.807,9.938 L8.661,9.938 L8.661,18.186 Z M7.218,8.669 C6.409,8.669 5.759,8.019 5.759,7.21 C5.759,6.401 6.409,5.751 7.218,5.751 C8.027,5.751 8.677,6.401 8.677,7.21 C8.661,8.019 8.011,8.669 7.218,8.669 Z M18.193,18.186 L18.178,18.186 L15.799,18.186 L15.799,14.189 C15.799,13.221 15.672,11.984 14.355,11.984 C13.007,11.984 12.785,13.031 12.785,14.125 L12.785,18.186 L10.406,18.186 L10.406,9.938 L12.626,9.938 L12.626,11.048 L12.69,11.048 C13.039,10.414 13.848,9.922 15.117,9.922 C17.734,9.922 18.193,11.429 18.193,13.665 L18.193,18.186 Z",
+};
+
 export const iconMap: Record<string, LucideIcon> = {
   Activity,
   AlertCircle,
@@ -278,6 +292,7 @@ export const brandIconMap: Record<string, SimpleIcon> = {
   instagram: siInstagram,
   javascript: siJavascript,
   leetcode: siLeetcode,
+  linkedin: linkedinIcon,
   linux: siLinux,
   medium: siMedium,
   mongodb: siMongodb,

@@ -1,7 +1,17 @@
 "use client";
 
-import { useRef, useSyncExternalStore, type PointerEvent as ReactPointerEvent, type ReactNode } from "react";
-import { motion, useMotionValue, useReducedMotion, useSpring } from "motion/react";
+import {
+  useRef,
+  useSyncExternalStore,
+  type PointerEvent as ReactPointerEvent,
+  type ReactNode,
+} from "react";
+import {
+  motion,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+} from "motion/react";
 import { SPRING_SOFT } from "./tokens";
 
 function subscribeCoarsePointer(onChange: () => void) {
@@ -26,7 +36,13 @@ export interface TiltProps {
   disabled?: boolean;
 }
 
-export function Tilt({ children, max = 12, perspective = 1000, className, disabled = false }: TiltProps) {
+export function Tilt({
+  children,
+  max = 12,
+  perspective = 1000,
+  className,
+  disabled = false,
+}: TiltProps) {
   const reduce = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
   const rotateX = useMotionValue(0);
@@ -36,7 +52,7 @@ export function Tilt({ children, max = 12, perspective = 1000, className, disabl
   const isCoarsePointer = useSyncExternalStore(
     subscribeCoarsePointer,
     getCoarsePointerSnapshot,
-    getCoarsePointerServerSnapshot
+    getCoarsePointerServerSnapshot,
   );
 
   // Tilt on a touch device is just jitter, so touch and disabled both skip
@@ -73,7 +89,14 @@ export function Tilt({ children, max = 12, perspective = 1000, className, disabl
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
     >
-      <motion.div style={{ rotateX: springRotateX, rotateY: springRotateY, transformStyle: "preserve-3d" }}>
+      <motion.div
+        className="h-full w-full"
+        style={{
+          rotateX: springRotateX,
+          rotateY: springRotateY,
+          transformStyle: "preserve-3d",
+        }}
+      >
         {children}
       </motion.div>
     </div>
