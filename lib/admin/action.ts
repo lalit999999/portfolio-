@@ -9,7 +9,7 @@ export function ok<T>(data?: T, message?: string): AdminActionState<T> {
 export function fail(
   code: AdminErrorCode,
   message: string,
-  fields?: Record<string, string[]>
+  fields?: Record<string, string[]>,
 ): AdminActionState {
   return { status: "error", code, message, fields };
 }

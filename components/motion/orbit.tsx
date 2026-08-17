@@ -12,6 +12,10 @@ export interface OrbitItem {
 export interface OrbitProps {
   items: OrbitItem[];
   radius?: number;
+  /** Square size (px) of each orbiting item, used to clamp `radius` so its
+   *  outer edge can never exceed the container's half-width. Defaults to 0
+   *  (no clamping) for callers that already size `radius` conservatively. */
+  itemSize?: number;
   duration?: number;
   reverse?: boolean;
   counterRotate?: boolean;
@@ -39,6 +43,7 @@ function ensureOrbitStylesheet() {
 export function Orbit({
   items,
   radius = 130,
+  itemSize = 0,
   duration = 20,
   reverse = false,
   counterRotate = true,
@@ -51,6 +56,12 @@ export function Orbit({
   }, []);
 
   const step = items.length > 0 ? 360 / items.length : 0;
+
+  // Container query units make this responsive to the wrapper's actual
+  // rendered size (e.g. across the size-48 -> sm:size-56 breakpoint) without
+  // a ResizeObserver: 50cqw is always half the container's own width, so the
+  // item's outer edge can never sit past the container edge.
+  const safeRadius = `min(${radius}px, calc(50cqw - ${itemSize / 2}px))`;
 
   const ringStyle: CSSProperties | undefined = reduce
     ? undefined
@@ -65,7 +76,11 @@ export function Orbit({
       };
 
   return (
-    <div aria-hidden className={cn("pointer-events-none absolute inset-0", className)} style={ringStyle}>
+    <div
+      aria-hidden
+      className={cn("pointer-events-none absolute inset-0", className)}
+      style={{ containerType: "inline-size", ...ringStyle }}
+    >
       {items.map((item, i) => {
         const angle = step * i;
         const counterStyle: CSSProperties =
@@ -90,7 +105,7 @@ export function Orbit({
               left: "50%",
               width: 0,
               height: 0,
-              transform: `rotate(${angle}deg) translate(${radius}px) rotate(${-angle}deg)`,
+              transform: `rotate(${angle}deg) translate(${safeRadius}) rotate(${-angle}deg)`,
             }}
           >
             <div style={counterStyle}>{item.node}</div>

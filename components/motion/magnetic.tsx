@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 import { motion, useMotionValue, useReducedMotion, useSpring } from "motion/react";
+import { useCoarsePointer } from "@/hooks/use-coarse-pointer";
 import { SPRING_MAGNETIC } from "./tokens";
 
 export interface MagneticProps {
@@ -15,6 +16,7 @@ export interface MagneticProps {
 // cursor approaches, not only once it's already over the element.
 export function Magnetic({ children, strength = 8, radius = 100, className }: MagneticProps) {
   const reduce = useReducedMotion();
+  const coarse = useCoarsePointer();
   const ref = useRef<HTMLSpanElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -22,7 +24,7 @@ export function Magnetic({ children, strength = 8, radius = 100, className }: Ma
   const springY = useSpring(y, SPRING_MAGNETIC);
 
   useEffect(() => {
-    if (reduce) return;
+    if (reduce || coarse) return;
 
     function handlePointerMove(e: PointerEvent) {
       const el = ref.current;
@@ -47,9 +49,9 @@ export function Magnetic({ children, strength = 8, radius = 100, className }: Ma
 
     window.addEventListener("pointermove", handlePointerMove);
     return () => window.removeEventListener("pointermove", handlePointerMove);
-  }, [reduce, radius, strength, x, y]);
+  }, [reduce, coarse, radius, strength, x, y]);
 
-  if (reduce) {
+  if (reduce || coarse) {
     return (
       <span ref={ref} className={className} style={{ display: "inline-block" }}>
         {children}

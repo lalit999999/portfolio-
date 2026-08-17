@@ -158,3 +158,36 @@
     opacity: 0.6;
   }
 }
+
+/* Responsive migration (R0): prevents horizontal scroll from off-canvas
+   layout overflow without breaking `position: sticky` descendants — unlike
+   `overflow-x: hidden`, `clip` does not create a new scroll container. */
+@layer base {
+  html {
+    overflow-x: clip;
+  }
+}
+
+/* Safe-area padding utilities, backed by env(safe-area-inset-*). Requires
+   the `viewport-fit=cover` viewport meta tag (set in app/layout.tsx) for
+   the env() values to be non-zero. */
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@utility pl-safe {
+  padding-left: env(safe-area-inset-left);
+}
+
+@utility pr-safe {
+  padding-right: env(safe-area-inset-right);
+}
+
+@utility px-safe {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
