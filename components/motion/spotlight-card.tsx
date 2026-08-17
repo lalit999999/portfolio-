@@ -3,6 +3,7 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { cn } from "@/lib/utils";
+import { useCoarsePointer } from "@/hooks/use-coarse-pointer";
 import { DUR, EASE_OUT, SPRING_SOFT, VIEWPORT_ONCE } from "./tokens";
 
 export interface SpotlightCardProps {
@@ -49,9 +50,11 @@ function ensureBeamStylesheet() {
   transition: opacity 0.3s ease;
   pointer-events: none;
 }
-.spotlight-beam:hover::before {
-  opacity: 1;
-  animation: spotlight-spin 2.5s linear infinite;
+@media (hover: hover) and (pointer: fine) {
+  .spotlight-beam:hover::before {
+    opacity: 1;
+    animation: spotlight-spin 2.5s linear infinite;
+  }
 }
 `;
   document.head.appendChild(style);
@@ -68,6 +71,7 @@ export function SpotlightCard({
   as = "div",
 }: SpotlightCardProps) {
   const reduce = useReducedMotion();
+  const coarse = useCoarsePointer();
   const ref = useRef<HTMLDivElement>(null);
   const Tag = TAGS[as];
 
@@ -77,7 +81,7 @@ export function SpotlightCard({
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || reduce) return;
+    if (!el || reduce || coarse) return;
 
     function handleMove(e: PointerEvent) {
       const rect = el!.getBoundingClientRect();
@@ -95,7 +99,7 @@ export function SpotlightCard({
       el.removeEventListener("pointermove", handleMove);
       el.removeEventListener("pointerleave", handleLeave);
     };
-  }, [reduce]);
+  }, [reduce, coarse]);
 
   return (
     <Tag
