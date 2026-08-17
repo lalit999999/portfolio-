@@ -131,6 +131,7 @@ export function ProfilePhoto({ profile, className }: ProfilePhotoProps) {
       <Orbit
         items={orbitItems}
         radius={110}
+        itemSize={32}
         duration={20}
         counterRotate
         className="absolute inset-0"
